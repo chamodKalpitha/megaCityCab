@@ -3,6 +3,7 @@ package com.bms.servlet;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -35,7 +36,10 @@ public class DriverServlet extends HttpServlet {
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
-        if (!AuthUtils.isAuthorized(request, response, AccountType.ADMIN)) {
+		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN, AccountType.MANAGER, AccountType.STAFF);
+		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
+		
+        if (!authorized) {
             return;
         }
         String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
