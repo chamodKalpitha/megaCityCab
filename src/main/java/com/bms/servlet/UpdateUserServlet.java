@@ -71,8 +71,13 @@ public class UpdateUserServlet extends HttpServlet {
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
+		
 		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN);
 		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
+        if (!authorized) {
+            return;
+        }
+        
 		
         int userId = request.getParameter("userId") != null ? Integer.parseInt(request.getParameter("userId")) : 0;
         if(userId==0) {
