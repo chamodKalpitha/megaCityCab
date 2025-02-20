@@ -26,12 +26,12 @@
 	            <ul class="navbar-nav me-auto">
 	                ${sessionScope.accountType == 'ADMIN' ? 
 	                    '<li class="nav-item"><a class="nav-link" href="users">Users</a></li>
-	                     <li class="nav-item"><a class="nav-link" href="fleets">Fleets</a></li>
+	                     <li class="nav-item"><a class="nav-link" href="vehicles">Vehicles</a></li>
 	                     <li class="nav-item"><a class="nav-link" href="drivers">Drivers</a></li>
 	                     <li class="nav-item"><a class="nav-link" href="bookings">Bookings</a></li>
 	                     <li class="nav-item"><a class="nav-link" href="profile">Profile</a></li>' : '' }
 	                ${sessionScope.accountType == 'STAFF' ? 
-	                    '<li class="nav-item"><a class="nav-link" href="#">Fleets</a></li>
+	                    '<li class="nav-item"><a class="nav-link" href="#">Vehicles</a></li>
 	                     <li class="nav-item"><a class="nav-link" href="#">Drivers</a></li>
 	                     <li class="nav-item"><a class="nav-link" href="#">Bookings</a></li>
 	                     <li class="nav-item"><a class="nav-link" href="#">Profile</a></li>' : '' }

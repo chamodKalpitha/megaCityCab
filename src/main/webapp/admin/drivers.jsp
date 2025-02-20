@@ -73,7 +73,7 @@
 		                        <td>${driver.driverStatus}</td>
 		                        <td class="d-flex justify-content-center gap-2">
 			                        <a href="${pageContext.request.contextPath}/admin/update-driver?driverId=${driver.driverId}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
-			                        <button class="btn btn-sm btn-info" class="btn btn-sm btn-info" onclick="showUserDetails(${driver.driverId}, '${driver.driverName}', '${driver.contactNumber}', '${driver.driverStatus}', '${driver.nicNumber}')"><i class="bi bi-eye"></i></button>
+			                        <button class="btn btn-sm btn-info" class="btn btn-sm btn-info" onclick="showDriverDetails(${driver.driverId}, '${driver.driverName}', '${driver.contactNumber}', '${driver.driverStatus}', '${driver.nicNumber}')"><i class="bi bi-eye"></i></button>
 			                        <button class="btn btn-sm btn-danger" data-user-id="${driver.driverId}" onclick="handleDelete(${driver.driverId})"><i class="bi bi-trash"></i></button>
 		                        </td>
 		                    </tr>
@@ -143,9 +143,9 @@
             }
         });
 	}
-	function showUserDetails(id, name, contactNumber, status, nicNumber) {
+	function showDriverDetails(id, name, contactNumber, status, nicNumber) {
 	    Swal.fire({
-	        title: "User Details",
+	        title: "Driver Details",
 	        html: 
 	            "<div style='text-align: left;'>" +
 	                "<p><strong>Driver ID:</strong> " + id + "</p>" +
