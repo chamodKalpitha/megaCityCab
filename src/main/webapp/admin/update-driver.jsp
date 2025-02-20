@@ -50,6 +50,12 @@
                     <option value="UNAVAILABLE" ${driver.driverStatus == 'UNAVAILABLE' ? 'selected' : ''}>Unavailable</option>
                 </select>
             </div>
+            
+            <!-- Image -->
+            <div class="mb-3">
+                <label for="vehicleImage" class="form-label">Vehicle Image</label>
+                <input type="text" class="form-control" id="vehicleImage" placeholder="Enter Image Url" name="vehicleImage" required>
+            </div>
 
             <!-- Update Button -->
             <div class="text-center">
