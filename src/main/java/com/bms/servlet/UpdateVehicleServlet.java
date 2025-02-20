@@ -2,6 +2,7 @@ package com.bms.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -34,10 +35,12 @@ public class UpdateVehicleServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (!AuthUtils.isAuthenticated(request, response)) {
+		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
-        if (!AuthUtils.isAuthorized(request, response, AccountType.ADMIN)) {
+		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN,AccountType.MANAGER);
+		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
+        if (!authorized) {
             return;
         }
         int vehicleId = request.getParameter("vehicleId") != null ? Integer.parseInt(request.getParameter("vehicleId")) : 0;
@@ -62,7 +65,9 @@ public class UpdateVehicleServlet extends HttpServlet {
         if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
-        if (!AuthUtils.isAuthorized(request, response, AccountType.ADMIN)) {
+		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN,AccountType.MANAGER);
+		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
+        if (!authorized) {
             return;
         }
         int vehicleId = request.getParameter("vehicleId") != null ? Integer.parseInt(request.getParameter("vehicleId")) : 0;
