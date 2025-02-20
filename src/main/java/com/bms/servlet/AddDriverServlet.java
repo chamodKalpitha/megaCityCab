@@ -13,7 +13,6 @@ import com.bms.controller.DriverController;
 import com.bms.dao.DriverDAO;
 import com.bms.dao.DriverDAOImpl;
 import com.bms.dto.DriverDTO;
-import com.bms.enums.AccountType;
 import com.bms.utils.AuthUtils;
 
 /**
@@ -35,9 +34,6 @@ public class AddDriverServlet extends HttpServlet {
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
-        if (!AuthUtils.isAuthorized(request, response, AccountType.ADMIN)) {
-            return;
-        }
         response.sendRedirect(request.getContextPath() + "/admin/new-driver.jsp");
 
 	}
@@ -46,6 +42,9 @@ public class AddDriverServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (!AuthUtils.isAuthenticated(request, response)) {
+            return;
+        }
 		String driverName = request.getParameter("driverName");
         String nicNumber = request.getParameter("nicNumber");
         String contactNumber = request.getParameter("contactNumber");
