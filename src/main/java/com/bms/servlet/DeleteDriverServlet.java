@@ -2,6 +2,7 @@ package com.bms.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,11 +30,13 @@ public class DeleteDriverServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	System.out.println("hit");
         if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
-        if (!AuthUtils.isAuthorized(request, response, AccountType.ADMIN)) {
+		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN, AccountType.MANAGER);
+		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
+		
+        if (!authorized) {
             return;
         }
 
