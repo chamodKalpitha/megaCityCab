@@ -2,6 +2,7 @@ package com.bms.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -35,7 +36,10 @@ public class AddVehicleServlet extends HttpServlet {
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
-        if (!AuthUtils.isAuthorized(request, response, AccountType.ADMIN)) {
+		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN, AccountType.MANAGER);
+		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
+		
+        if (!authorized) {
             return;
         }
         response.sendRedirect(request.getContextPath() + "/admin/new-vehicle.jsp");
@@ -43,6 +47,15 @@ public class AddVehicleServlet extends HttpServlet {
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (!AuthUtils.isAuthenticated(request, response)) {
+            return;
+        }
+		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN, AccountType.MANAGER);
+		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
+		
+        if (!authorized) {
+            return;
+        }
         String vehicleBrand = request.getParameter("vehicleBrand");
         String vehicleModel = request.getParameter("vehicleModel");
         String plateNumber = request.getParameter("plateNumber");
