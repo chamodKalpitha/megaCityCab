@@ -2,6 +2,7 @@ package com.bms.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,7 +34,10 @@ public class AddUserServlet extends HttpServlet {
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
-        if (!AuthUtils.isAuthorized(request, response, AccountType.ADMIN)) {
+		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN);
+		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
+		
+        if (!authorized) {
             return;
         }
         response.sendRedirect(request.getContextPath() + "/admin/new-users.jsp");
@@ -43,6 +47,16 @@ public class AddUserServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (!AuthUtils.isAuthenticated(request, response)) {
+            return;
+        }
+		
+		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN);
+		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
+		
+        if (!authorized) {
+            return;
+        }
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         AccountType accountType = AccountType.valueOf(request.getParameter("accountType"));
