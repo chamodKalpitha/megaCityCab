@@ -13,6 +13,7 @@ import com.bms.controller.DriverController;
 import com.bms.dao.DriverDAO;
 import com.bms.dao.DriverDAOImpl;
 import com.bms.dto.DriverDTO;
+import com.bms.enums.AccountType;
 import com.bms.enums.DriverStatus;
 import com.bms.utils.AuthUtils;
 
@@ -38,7 +39,9 @@ public class UpdateDriverServlet extends HttpServlet {
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
-
+        if (!AuthUtils.isAuthorized(request, response, AccountType.ADMIN)) {
+            return;
+        }
         int driverId = request.getParameter("driverId") != null ? Integer.parseInt(request.getParameter("driverId")) : 0;
         if (driverId == 0) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Driver ID");
