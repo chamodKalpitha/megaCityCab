@@ -10,7 +10,7 @@ public class DatabaseConfig {
     private static DatabaseConfig instance;
     private Connection connection;
 
-    private DatabaseConfig() throws IOException {
+    private DatabaseConfig() throws IOException,ClassNotFoundException {
     	Properties properties = new Properties();
 		properties.load(DatabaseConfig.class.getClassLoader().getResourceAsStream("db.properties"));
 		
@@ -20,11 +20,13 @@ public class DatabaseConfig {
 		
 		
 		try {
+		    Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
-			System.out.print("Database connection established..");
+			System.out.println("Database connection established..");
 		} catch (SQLException e) {
+			System.out.println(e.getMessage());
 			e.printStackTrace();
-		}
+		} 
     }
 
     public static DatabaseConfig getInstance() {
@@ -33,7 +35,7 @@ public class DatabaseConfig {
                 if (instance == null) {
                     try {
 						instance = new DatabaseConfig();
-					} catch (IOException e) {
+					} catch (IOException | ClassNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
