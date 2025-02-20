@@ -2,6 +2,7 @@ package com.bms.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,10 +34,12 @@ public class DeleteUserServlet extends HttpServlet {
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
-        if (!AuthUtils.isAuthorized(request, response, AccountType.ADMIN)) {
+		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN);
+		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
+		
+        if (!authorized) {
             return;
         }
-        
         String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
         int entries = request.getParameter("entries") != null ? Integer.parseInt(request.getParameter("entries")) : 10;
         int userId = request.getParameter("userId") != null ? Integer.parseInt(request.getParameter("userId")) : 0;

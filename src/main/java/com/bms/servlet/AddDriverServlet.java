@@ -2,6 +2,7 @@ package com.bms.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,6 +14,7 @@ import com.bms.controller.DriverController;
 import com.bms.dao.DriverDAO;
 import com.bms.dao.DriverDAOImpl;
 import com.bms.dto.DriverDTO;
+import com.bms.enums.AccountType;
 import com.bms.utils.AuthUtils;
 
 /**
@@ -34,6 +36,13 @@ public class AddDriverServlet extends HttpServlet {
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
+		
+		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN, AccountType.MANAGER);
+		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
+		
+        if (!authorized) {
+            return;
+        }
         response.sendRedirect(request.getContextPath() + "/admin/new-driver.jsp");
 
 	}
@@ -43,6 +52,12 @@ public class AddDriverServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		if (!AuthUtils.isAuthenticated(request, response)) {
+            return;
+        }
+		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN, AccountType.MANAGER);
+		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
+		
+        if (!authorized) {
             return;
         }
 		String driverName = request.getParameter("driverName");

@@ -2,6 +2,7 @@ package com.bms.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -38,7 +39,10 @@ public class UpdateUserServlet extends HttpServlet {
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
-        if (!AuthUtils.isAuthorized(request, response, AccountType.ADMIN)) {
+		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN);
+		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
+		
+        if (!authorized) {
             return;
         }
         
@@ -63,6 +67,12 @@ public class UpdateUserServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		if (!AuthUtils.isAuthenticated(request, response)) {
+            return;
+        }
+		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN);
+		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
 		
         int userId = request.getParameter("userId") != null ? Integer.parseInt(request.getParameter("userId")) : 0;
         if(userId==0) {
