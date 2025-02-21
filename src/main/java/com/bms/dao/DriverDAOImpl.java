@@ -115,4 +115,22 @@ public class DriverDAOImpl implements DriverDAO {
             return rowsUpdated > 0;
         }
     }
+
+	@Override
+	public List<DriverDTO> getDriversId() throws SQLException {
+        List<DriverDTO> driverList = new ArrayList<>();
+        String sql = "SELECT driver_id, driver_name, nic_number FROM driver WHERE driver_status = ? AND is_delete != 1 ORDER BY driver_id ASC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, DriverStatus.AVAILABLE.toString());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                driverList.add(new DriverDTO(
+                    rs.getInt("driver_id"),
+                    rs.getString("driver_name"),
+                    rs.getString("nic_number")
+                ));
+            }
+        }
+        return driverList;
+	}
 }
