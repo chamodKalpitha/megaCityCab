@@ -84,8 +84,9 @@ public class UpdateVehicleServlet extends HttpServlet {
         VehicleStatus vehicleStatus = VehicleStatus.valueOf(request.getParameter("vehicleStatus"));
         VehicleType vehicleType = VehicleType.valueOf(request.getParameter("vehicleType"));
         double ratePerKM = Double.parseDouble(request.getParameter("ratePerKM"));
+        double ratePerDay = Double.parseDouble(request.getParameter("ratePerDay"));
 
-        VehicleDTO vehicleDTO = new VehicleDTO(vehicleId, vehicleBrand, vehicleModel, plateNumber, capacity, vehicleStatus, vehicleType,vahicleImage, ratePerKM);
+        VehicleDTO vehicleDTO = new VehicleDTO(vehicleId, vehicleBrand, vehicleModel, plateNumber, capacity, vehicleStatus, vehicleType,vahicleImage, ratePerKM,ratePerDay);
 
         try {
             boolean isUpdated = vehicleController.updateVehicle(vehicleDTO);
