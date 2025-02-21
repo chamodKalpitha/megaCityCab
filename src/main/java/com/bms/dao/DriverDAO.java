@@ -13,4 +13,6 @@ public interface DriverDAO {
     boolean deleteDriver(int driverId) throws SQLException;
     DriverDTO getDriverById(int driverId) throws SQLException;
     boolean updateDriver(Driver driver) throws SQLException;
+    List<DriverDTO> getDriversId() throws SQLException;
+
 }

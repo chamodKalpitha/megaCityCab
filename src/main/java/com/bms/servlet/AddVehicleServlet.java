@@ -63,9 +63,10 @@ public class AddVehicleServlet extends HttpServlet {
         VehicleStatus vehicleStatus = VehicleStatus.valueOf(request.getParameter("vehicleStatus"));
         VehicleType vehicleType = VehicleType.valueOf(request.getParameter("vehicleType"));
         double ratePerKM = Double.parseDouble(request.getParameter("ratePerKM"));
+        double ratePerDay = Double.parseDouble(request.getParameter("ratePerDay"));
         String vahicleImage = request.getParameter("vehicleImage");
 
-        VehicleDTO vehicleDTO = new VehicleDTO(vehicleBrand, vehicleModel, plateNumber, capacity, vehicleStatus, vehicleType, vahicleImage, ratePerKM);
+        VehicleDTO vehicleDTO = new VehicleDTO(vehicleBrand, vehicleModel, plateNumber, capacity, vehicleStatus, vehicleType, vahicleImage, ratePerKM,ratePerDay);
         
         try {
             boolean isCreated = vehicleController.createVehicle(vehicleDTO);

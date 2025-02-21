@@ -13,10 +13,11 @@ public class Vehicle {
 	private VehicleType vehicleType;
 	private String imageURLString;
 	private double ratePerKM;
+	private double ratePerDay;
     private boolean isDelete;
     
 	public Vehicle(int vehicleId, String vehicleBrand, String vehicleModel, String plateNumber, int capacity,
-			VehicleStatus vehicleStatus, VehicleType vehicleType, String imageURLString, double ratePerKM) {
+			VehicleStatus vehicleStatus, VehicleType vehicleType, String imageURLString, double ratePerKM,double ratePerDay) {
 		super();
 		this.vehicleId = vehicleId;
 		this.vehicleBrand = vehicleBrand;
@@ -27,10 +28,11 @@ public class Vehicle {
 		this.vehicleType = vehicleType;
 		this.imageURLString = imageURLString;
 		this.ratePerKM = ratePerKM;
+		this.ratePerDay = ratePerDay;
 	}
 
 	public Vehicle(String vehicleBrand, String vehicleModel, String plateNumber, int capacity,
-			VehicleStatus vehicleStatus, VehicleType vehicleType, String imageURLString, double ratePerKM) {
+			VehicleStatus vehicleStatus, VehicleType vehicleType, String imageURLString, double ratePerKM,double ratePerDay) {
 		super();
 		this.vehicleBrand = vehicleBrand;
 		this.vehicleModel = vehicleModel;
@@ -40,6 +42,7 @@ public class Vehicle {
 		this.vehicleType = vehicleType;
 		this.imageURLString = imageURLString;
 		this.ratePerKM = ratePerKM;
+		this.ratePerDay = ratePerDay;
 	}
 
 	public int getVehicleId() {
@@ -120,6 +123,14 @@ public class Vehicle {
 
 	public void setRatePerKM(double ratePerKM) {
 		this.ratePerKM = ratePerKM;
+	}
+
+	public double getRatePerDay() {
+		return ratePerDay;
+	}
+
+	public void setRatePerDay(double ratePerDay) {
+		this.ratePerDay = ratePerDay;
 	}
 		
 }
