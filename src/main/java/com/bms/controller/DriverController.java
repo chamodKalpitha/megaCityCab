@@ -53,4 +53,8 @@ public class DriverController {
         driver.setDriverStatus(driverDto.getDriverStatus());
         return driverDAO.updateDriver(driver);
     }
+    
+    public List<DriverDTO> getDriversID() throws SQLException {
+        return driverDAO.getDriversId();
+    }
 }
