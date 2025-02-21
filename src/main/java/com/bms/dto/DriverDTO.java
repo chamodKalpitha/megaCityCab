@@ -9,8 +9,15 @@ public class DriverDTO {
     private String contactNumber;
     private DriverStatus driverStatus;
     private boolean isDelete;
+    
+    public DriverDTO(int driverId, String driverName, String nicNumber) {
+		super();
+		this.driverId = driverId;
+		this.driverName = driverName;
+		this.nicNumber = nicNumber;
+	}
 
-    public DriverDTO(int driverId, String driverName, String nicNumber, String contactNumber, DriverStatus driverStatus) {
+	public DriverDTO(int driverId, String driverName, String nicNumber, String contactNumber, DriverStatus driverStatus) {
         this.driverId = driverId;
         this.driverName = driverName;
         this.nicNumber = nicNumber;
