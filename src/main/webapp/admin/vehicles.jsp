@@ -78,7 +78,7 @@
 		                        <td class="d-flex justify-content-center gap-2">
 			                        <a href="${pageContext.request.contextPath}/admin/update-vehicle?vehicleId=${vehicle.vehicleId}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
 			                        <button class="btn btn-sm btn-info" class="btn btn-sm btn-info" 
-			                        onclick="showVehicleDetails(${vehicle.vehicleId}, '${vehicle.vehicleBrand}', '${vehicle.vehicleModel}', '${vehicle.plateNumber}', ${vehicle.capacity}, '${vehicle.vehicleStatus}', '${vehicle.vehicleType}','${vehicle.ratePerKM}')"><i class="bi bi-eye"></i></button>
+			                        onclick="showVehicleDetails(${vehicle.vehicleId}, '${vehicle.vehicleBrand}', '${vehicle.vehicleModel}', '${vehicle.plateNumber}', ${vehicle.capacity}, '${vehicle.vehicleStatus}', '${vehicle.vehicleType}','${vehicle.ratePerKM}','${vehicle.ratePerDay}')"><i class="bi bi-eye"></i></button>
 			                        <button class="btn btn-sm btn-danger" data-user-id="${vehicle.vehicleId}" onclick="handleDelete(${vehicle.vehicleId})"><i class="bi bi-trash"></i></button>
 		                        </td>
 		                    </tr>
@@ -148,7 +148,7 @@
             }
         });
 	}
-	function showVehicleDetails(vehicleId, vehicleBrand, vehicleModel, plateNumber, capacity, vehicleStatus,vehicleType,ratePerKM) {
+	function showVehicleDetails(vehicleId, vehicleBrand, vehicleModel, plateNumber, capacity, vehicleStatus,vehicleType,ratePerKM,ratePerDay) {
 	    Swal.fire({
 	        title: "Vehicle Details",
 	        html: 
@@ -160,7 +160,8 @@
 	                "<p><strong>Capacity:</strong> " + capacity + "</p>" +
 	                "<p><strong>Vehicle Status:</strong> " + vehicleStatus + "</p>" +
 	                "<p><strong>Vehicle Type:</strong> " + vehicleType + "</p>" +
-	                "<p><strong>Vehicle Type:</strong> " + ratePerKM + "</p>" +
+	                "<p><strong>Per KM:</strong> " + ratePerKM + "</p>" +
+	                "<p><strong>Per Day:</strong> " + ratePerDay + "</p>" +
 	            "</div>",
 	        icon: "info",
 	        confirmButtonText: "OK",
@@ -176,7 +177,7 @@
 	function showImage(url){
 		Swal.fire({
 			  imageUrl: url,
-			  imageAlt: "A tall image"
+			  imageAlt: "image",
 			});
 	}
 
