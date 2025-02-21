@@ -14,9 +14,19 @@ public class VehicleDTO {
 	private VehicleType vehicleType;
 	private String imageURLString;
 	private double ratePerKM;
-    
+	private double ratePerDay;
+	
+	
+	
+	public VehicleDTO(int vehicleId, String vehicleBrand, String vehicleModel, String plateNumber) {
+		this.vehicleId = vehicleId;
+		this.vehicleBrand = vehicleBrand;
+		this.vehicleModel = vehicleModel;
+		this.plateNumber = plateNumber;
+	}
+
 	public VehicleDTO(String vehicleBrand, String vehicleModel, String plateNumber, int capacity,
-			VehicleStatus vehicleStatus, VehicleType vehicleType, String imageURLString, double ratePerKM) {
+			VehicleStatus vehicleStatus, VehicleType vehicleType, String imageURLString, double ratePerKM,double ratePerDay) {
 		super();
 		this.vehicleBrand = vehicleBrand;
 		this.vehicleModel = vehicleModel;
@@ -26,10 +36,11 @@ public class VehicleDTO {
 		this.vehicleType = vehicleType;
 		this.imageURLString = imageURLString;
 		this.ratePerKM = ratePerKM;
+		this.ratePerDay = ratePerDay;
 	}
 
 	public VehicleDTO(int vehicleId, String vehicleBrand, String vehicleModel, String plateNumber, int capacity,
-			VehicleStatus vehicleStatus, VehicleType vehicleType, String imageURLString, double ratePerKM) {
+			VehicleStatus vehicleStatus, VehicleType vehicleType, String imageURLString, double ratePerKM, double ratePerDay) {
 		super();
 		this.vehicleId = vehicleId;
 		this.vehicleBrand = vehicleBrand;
@@ -40,6 +51,7 @@ public class VehicleDTO {
 		this.vehicleType = vehicleType;
 		this.imageURLString = imageURLString;
 		this.ratePerKM = ratePerKM;
+		this.ratePerDay = ratePerDay;
 	}
 
 	public int getVehicleId() {
@@ -113,4 +125,13 @@ public class VehicleDTO {
 	public void setRatePerKM(double ratePerKM) {
 		this.ratePerKM = ratePerKM;
 	}
+
+	public double getRatePerDay() {
+		return ratePerDay;
+	}
+
+	public void setRatePerDay(double ratePerDay) {
+		this.ratePerDay = ratePerDay;
+	}
+
 }

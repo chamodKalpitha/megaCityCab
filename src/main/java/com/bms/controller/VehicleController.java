@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.bms.dao.VehicleDAO;
-import com.bms.dto.DriverDTO;
 import com.bms.dto.VehicleDTO;
 import com.bms.model.Vehicle;
 
@@ -17,7 +16,7 @@ public class VehicleController {
     }
 
     public boolean createVehicle(VehicleDTO vehicleDTO) throws SQLException {
-    	Vehicle vehicle = new Vehicle(vehicleDTO.getVehicleBrand(),vehicleDTO.getVehicleModel(),vehicleDTO.getPlateNumber(),vehicleDTO.getCapacity(),vehicleDTO.getVehicleStatus(),vehicleDTO.getVehicleType(),vehicleDTO.getImageURLString(), vehicleDTO.getRatePerKM());
+    	Vehicle vehicle = new Vehicle(vehicleDTO.getVehicleBrand(),vehicleDTO.getVehicleModel(),vehicleDTO.getPlateNumber(),vehicleDTO.getCapacity(),vehicleDTO.getVehicleStatus(),vehicleDTO.getVehicleType(),vehicleDTO.getImageURLString(), vehicleDTO.getRatePerKM(), vehicleDTO.getRatePerDay());
         return vehicleDAO.createVehicle(vehicle);
     }
 
@@ -34,11 +33,15 @@ public class VehicleController {
     }
 
     public boolean updateVehicle(VehicleDTO vehicleDTO) throws SQLException {
-    	Vehicle vehicle = new Vehicle(vehicleDTO.getVehicleId(),vehicleDTO.getVehicleBrand(),vehicleDTO.getVehicleModel(),vehicleDTO.getPlateNumber(),vehicleDTO.getCapacity(),vehicleDTO.getVehicleStatus(),vehicleDTO.getVehicleType(),vehicleDTO.getImageURLString(),vehicleDTO.getRatePerKM());
+    	Vehicle vehicle = new Vehicle(vehicleDTO.getVehicleId(),vehicleDTO.getVehicleBrand(),vehicleDTO.getVehicleModel(),vehicleDTO.getPlateNumber(),vehicleDTO.getCapacity(),vehicleDTO.getVehicleStatus(),vehicleDTO.getVehicleType(),vehicleDTO.getImageURLString(),vehicleDTO.getRatePerKM(), vehicleDTO.getRatePerDay());
         return vehicleDAO.updateVehicle(vehicle);
     }
 
     public boolean deleteVehicle(int vehicleId) throws SQLException {
         return vehicleDAO.deleteVehicle(vehicleId);
     }
+    
+    public List<VehicleDTO> getVehiclesNumberPlate() throws SQLException {
+        return vehicleDAO.getVehiclesNumberPlate();
+    } 
 }

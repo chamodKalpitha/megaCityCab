@@ -24,7 +24,7 @@ public class VehicleDAOImpl implements VehicleDAO {
 
     @Override
     public boolean createVehicle(Vehicle vehicle) throws SQLException {
-        String query = "INSERT INTO vehicle (vehicle_brand, vehicle_model, plate_number, capacity, vehicle_status, vehicle_type, rate_per_km, image_url_string ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO vehicle (vehicle_brand, vehicle_model, plate_number, capacity, vehicle_status, vehicle_type, rate_per_km, rate_per_day, image_url_string ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, vehicle.getVehicleBrand());
             stmt.setString(2, vehicle.getVehicleModel());
@@ -33,7 +33,8 @@ public class VehicleDAOImpl implements VehicleDAO {
             stmt.setString(5, vehicle.getVehicleStatus().name());
             stmt.setString(6, vehicle.getVehicleType().name());
             stmt.setDouble(7, vehicle.getRatePerKM());
-            stmt.setString(8, vehicle.getImageURLString());
+            stmt.setDouble(9, vehicle.getRatePerDay());
+            stmt.setString(9, vehicle.getImageURLString());
             stmt.executeUpdate();
             return true;
         }
@@ -42,7 +43,7 @@ public class VehicleDAOImpl implements VehicleDAO {
     @Override
     public List<VehicleDTO> getVehicles(String search, int limit, int offset) throws SQLException {
         List<VehicleDTO> vehicleList = new ArrayList<>();
-        String sql = "SELECT vehicle_id, vehicle_brand, vehicle_model, plate_number, capacity, vehicle_status, vehicle_type,image_url_string, rate_per_km FROM vehicle WHERE (LOWER(vehicle_brand) LIKE LOWER(?) OR LOWER(plate_number) LIKE LOWER(?)) AND is_delete != 1 ORDER BY vehicle_id ASC LIMIT ? OFFSET ?";
+        String sql = "SELECT vehicle_id, vehicle_brand, vehicle_model, plate_number, capacity, vehicle_status, vehicle_type, rate_per_km, rate_per_day, image_url_string FROM vehicle WHERE (LOWER(vehicle_brand) LIKE LOWER(?) OR LOWER(plate_number) LIKE LOWER(?)) AND is_delete != 1 ORDER BY vehicle_id ASC LIMIT ? OFFSET ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             String searchParam = "%" + search + "%";
             ps.setString(1, searchParam);
@@ -60,13 +61,14 @@ public class VehicleDAOImpl implements VehicleDAO {
                     VehicleStatus.valueOf(rs.getString("vehicle_status")),
                     VehicleType.valueOf(rs.getString("vehicle_type")),
                     rs.getString("image_url_string"),
-                    rs.getDouble("rate_per_km")
+                    rs.getDouble("rate_per_km"),
+                    rs.getDouble("rate_per_day")
                 ));
             }
         }
         return vehicleList;
     }
-
+    
     @Override
     public int getVehiclesCount(String search, int limit, int offset) throws SQLException {
         String sql = "SELECT COUNT(*) FROM vehicle WHERE (LOWER(vehicle_brand) LIKE LOWER(?) OR LOWER(plate_number) LIKE LOWER(?)) AND is_delete != 1";
@@ -94,7 +96,7 @@ public class VehicleDAOImpl implements VehicleDAO {
 
     @Override
     public VehicleDTO getVehicleById(int vehicleId) throws SQLException {
-        String sql = "SELECT vehicle_id, vehicle_brand, vehicle_model, plate_number, capacity, vehicle_status, vehicle_type,image_url_string, rate_per_km FROM vehicle WHERE vehicle_id = ?";
+        String sql = "SELECT vehicle_id, vehicle_brand, vehicle_model, plate_number, capacity, vehicle_status, vehicle_type,image_url_string, rate_per_km, rate_per_day FROM vehicle WHERE vehicle_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, vehicleId);
             ResultSet rs = ps.executeQuery();
@@ -108,7 +110,8 @@ public class VehicleDAOImpl implements VehicleDAO {
                     VehicleStatus.valueOf(rs.getString("vehicle_status")),
                     VehicleType.valueOf(rs.getString("vehicle_type")),
                     rs.getString("image_url_string"),
-                    rs.getDouble("rate_per_km")
+                    rs.getDouble("rate_per_km"),
+                    rs.getDouble("rate_per_day")
                 );
             }
         }
@@ -117,7 +120,7 @@ public class VehicleDAOImpl implements VehicleDAO {
 
     @Override
     public boolean updateVehicle(Vehicle vehicle) throws SQLException {
-        String query = "UPDATE vehicle SET vehicle_brand = ?, vehicle_model = ?, plate_number = ?, capacity = ?, vehicle_status = ?, vehicle_type = ?, rate_per_km = ?,image_url_string = ? WHERE vehicle_id = ?";
+        String query = "UPDATE vehicle SET vehicle_brand = ?, vehicle_model = ?, plate_number = ?, capacity = ?, vehicle_status = ?, vehicle_type = ?, image_url_string = ?, rate_per_km = ?,rate_per_day = ? WHERE vehicle_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, vehicle.getVehicleBrand());
             stmt.setString(2, vehicle.getVehicleModel());
@@ -125,11 +128,30 @@ public class VehicleDAOImpl implements VehicleDAO {
             stmt.setInt(4, vehicle.getCapacity());
             stmt.setString(5, vehicle.getVehicleStatus().name());
             stmt.setString(6, vehicle.getVehicleType().name());
-            stmt.setDouble(7, vehicle.getRatePerKM());
-            stmt.setString(8, vehicle.getImageURLString());
-            stmt.setInt(9, vehicle.getVehicleId());
+            stmt.setString(7, vehicle.getImageURLString());
+            stmt.setDouble(8, vehicle.getRatePerKM());
+            stmt.setDouble(9, vehicle.getRatePerDay());
+            stmt.setInt(10, vehicle.getVehicleId());
             int rowsUpdated = stmt.executeUpdate();
             return rowsUpdated > 0;
         }
     }
+
+	@Override
+	public List<VehicleDTO> getVehiclesNumberPlate() throws SQLException {
+		List<VehicleDTO> vehicleList = new ArrayList<>();
+        String sql = "SELECT vehicle_id, plate_number,vehicle_brand,vehicle_model FROM vehicle WHERE is_delete != 1";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                vehicleList.add(new VehicleDTO(
+                    rs.getInt("vehicle_id"),
+                    rs.getString("vehicle_brand"),
+                    rs.getString("vehicle_model"),
+                    rs.getString("plate_number")
+                ));
+            }
+        }
+        return vehicleList;
+	}
 }

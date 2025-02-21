@@ -13,4 +13,6 @@ public interface VehicleDAO {
     boolean deleteVehicle(int vehicleId) throws SQLException;
     VehicleDTO getVehicleById(int vehicleId) throws SQLException;
     boolean updateVehicle(Vehicle vehicle) throws SQLException;
+    List<VehicleDTO> getVehiclesNumberPlate() throws SQLException;
+
 }
