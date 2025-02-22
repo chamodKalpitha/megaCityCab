@@ -19,33 +19,8 @@ pageEncoding="UTF-8"%>
   </head>
   <body>
 
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-	    <div class="container-fluid">
-
-	        <a class="navbar-brand d-flex align-items-center" href="#">
-	            <span class="fs-4 fw-bold">{ }</span>
-	        </a>
+	<jsp:include page="./components/menu-bar.jsp"/>
 	
-	        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-	            <span class="navbar-toggler-icon"></span>
-	        </button>
-
-	        <div class="collapse navbar-collapse" id="navbarNav">
-	            <ul class="navbar-nav me-auto">
-	                <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-	                <li class="nav-item"><a class="nav-link" href="#">Features</a></li>
-	                <li class="nav-item"><a class="nav-link" href="#">Pricing</a></li>
-	                <li class="nav-item"><a class="nav-link" href="#">FAQs</a></li>
-	                <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-	            </ul>
-	
-				<a href="./login.jsp">
-					<button class="btn btn-primary ">Login</button>
-				</a>
-
-	        </div>
-	    </div>
-	</nav>
 	 <div class="d-flex justify-content-center align-items-center center-container">
         <div class="card p-4 shadow-lg" style="width: 44rem;">
             <div class="card-body">
