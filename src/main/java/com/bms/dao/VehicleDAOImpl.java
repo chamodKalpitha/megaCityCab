@@ -154,4 +154,52 @@ public class VehicleDAOImpl implements VehicleDAO {
         }
         return vehicleList;
 	}
+
+	@Override
+	public List<VehicleDTO> getVehiclesForCustomer(String search, int limit, int offset) throws SQLException {
+        List<VehicleDTO> vehicleList = new ArrayList<>();
+        String sql = "SELECT vehicle_id, vehicle_brand, vehicle_model, capacity, vehicle_type, rate_per_km, rate_per_day, image_url_string " +
+                "FROM vehicle " +
+                "WHERE (LOWER(vehicle_brand) LIKE LOWER(?) OR LOWER(plate_number) LIKE LOWER(?)) " +
+                "AND vehicle_status = 'AVAILABLE' " +
+                "AND is_delete != 1 " +
+                "ORDER BY vehicle_id ASC " +
+                "LIMIT ? OFFSET ?";        
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String searchParam = "%" + search + "%";
+            ps.setString(1, searchParam);
+            ps.setString(2, searchParam);
+            ps.setInt(3, limit);
+            ps.setInt(4, offset);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                vehicleList.add(new VehicleDTO(
+                    rs.getInt("vehicle_id"),
+                    rs.getString("vehicle_brand"),
+                    rs.getString("vehicle_model"),
+                    rs.getInt("capacity"),
+                    VehicleType.valueOf(rs.getString("vehicle_type")),
+                    rs.getString("image_url_string"),
+                    rs.getDouble("rate_per_km"),
+                    rs.getDouble("rate_per_day")
+                ));
+            }
+        }
+        return vehicleList;
+	}
+	
+    @Override
+    public int getVehiclesCountForCustomer(String search) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM vehicle WHERE (LOWER(vehicle_brand) LIKE LOWER(?) OR LOWER(plate_number) LIKE LOWER(?)) AND is_delete != 1 AND vehicle_status = 'AVAILABLE' ";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String searchParam = "%" + search + "%";
+            ps.setString(1, searchParam);
+            ps.setString(2, searchParam);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
 }

@@ -53,6 +53,19 @@ public class VehicleDTO {
 		this.ratePerKM = ratePerKM;
 		this.ratePerDay = ratePerDay;
 	}
+	
+	public VehicleDTO(int vehicleId, String vehicleBrand, String vehicleModel, int capacity, VehicleType vehicleType,
+			String imageURLString, double ratePerKM, double ratePerDay) {
+		super();
+		this.vehicleId = vehicleId;
+		this.vehicleBrand = vehicleBrand;
+		this.vehicleModel = vehicleModel;
+		this.capacity = capacity;
+		this.vehicleType = vehicleType;
+		this.imageURLString = imageURLString;
+		this.ratePerKM = ratePerKM;
+		this.ratePerDay = ratePerDay;
+	}
 
 	public int getVehicleId() {
 		return vehicleId;

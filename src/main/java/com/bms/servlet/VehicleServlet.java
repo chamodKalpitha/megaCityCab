@@ -3,6 +3,7 @@ package com.bms.servlet;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +16,8 @@ import com.bms.controller.VehicleController;
 import com.bms.dao.VehicleDAO;
 import com.bms.dao.VehicleDAOImpl;
 import com.bms.dto.VehicleDTO;
+import com.bms.enums.AccountType;
+import com.bms.utils.AuthUtils;
 
 
 /**
@@ -32,6 +35,16 @@ public class VehicleServlet extends HttpServlet {
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		if (!AuthUtils.isAuthenticated(request, response)) {
+            return;
+        }
+		
+		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN,AccountType.MANAGER,AccountType.STAFF);
+		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
+        if (!authorized) {
+            return;
+        }
 
         try {
         	
