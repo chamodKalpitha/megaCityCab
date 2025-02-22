@@ -9,7 +9,7 @@ import com.bms.model.Driver;
 public interface DriverDAO {
     boolean createDriver(Driver driver) throws SQLException;
     List<DriverDTO> getDrivers(String search, int limit, int offset) throws SQLException;
-    int getDriversCount(String search, int limit, int offset) throws SQLException;
+    int getDriversCount(String search) throws SQLException;
     boolean deleteDriver(int driverId) throws SQLException;
     DriverDTO getDriverById(int driverId) throws SQLException;
     boolean updateDriver(Driver driver) throws SQLException;
