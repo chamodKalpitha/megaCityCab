@@ -9,19 +9,19 @@ import com.bms.enums.VehicleType;
 public class InputValidator {
 
 
-    public static void isValidEmail(String email) {
+    public static String isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         Pattern pattern = Pattern.compile(emailRegex);
         if(!pattern.matcher(email).matches()) {
-            throw new IllegalArgumentException("Invalid email format");
+            return null;
         }
+        return email;
     }
 
 
-    public static void isValidPassword(String password) {
+    public static String isValidPassword(String password) {
         if (password == null || password.length() < 8) {
-            throw new IllegalArgumentException("Password must be at least 8 characters");
-
+           return null;
         }
         boolean hasUpperCase = false;
         boolean hasLowerCase = false;
@@ -34,16 +34,18 @@ public class InputValidator {
         }
 
         if(!hasUpperCase && hasLowerCase && hasDigit) {
-            throw new IllegalArgumentException("Password must contain one uppercase letter, one lowercase letter, and one digit.");
+            return null;
         };
+        return password;
     }
     
-    public static void isValidPhoneNumber(String phoneNumber) {
+    public static String isValidPhoneNumber(String phoneNumber) {
         String phoneRegex = "^[0-9]{10}$";
         Pattern pattern = Pattern.compile(phoneRegex);
         if (!pattern.matcher(phoneNumber).matches()) {
-            throw new IllegalArgumentException("Invalid phone number format. It must be exactly 10 digits.");
+            return null;
         }
+        return phoneNumber;
     }
     
     public static Integer parseInteger(String value) {

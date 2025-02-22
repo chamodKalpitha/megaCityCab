@@ -23,6 +23,8 @@ public class UserDTO {
 		this.accountType = accountType;
 	}
 	
+	
+	
 	public UserDTO(int userId, String userName, String userEmail, AccountType accountType,
 			AccountStatus accountStatus) {
 		this.userId = userId;

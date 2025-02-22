@@ -14,8 +14,6 @@ public class LoginController {
 	}
 
 	public LoginDTO login(LoginDTO loginDTO) throws SQLException {
-		InputValidator.isValidEmail(loginDTO.getEmail());
-		InputValidator.isValidPassword(loginDTO.getPassword());
 		User user = new User(loginDTO.getEmail(),loginDTO.getPassword());
 		return loginDAO.login(user);
 	}

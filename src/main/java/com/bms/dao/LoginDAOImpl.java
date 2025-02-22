@@ -25,7 +25,6 @@ public class LoginDAOImpl implements LoginDAO {
     public LoginDTO login(User user) throws SQLException {
         String hashedPassword = PasswordUtils.hashPassword(user.getPassword());
 
-
         String sql = "SELECT account_type FROM app_user WHERE user_email=? AND password=? AND account_status=? AND is_delete=0";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
