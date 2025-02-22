@@ -20,7 +20,7 @@ import com.bms.dto.VehicleDTO;
 /**
  * Servlet implementation class VehicleServlet
  */
-@WebServlet("/admin/vehicles")
+@WebServlet("/dashboard/vehicles")
 public class VehicleServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private VehicleController controller;
@@ -33,23 +33,33 @@ public class VehicleServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
-        int entries = request.getParameter("entries") != null ? Integer.parseInt(request.getParameter("entries")) : 10;
-        int currentPage = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
-        int offset = (currentPage - 1) * entries;
-        
-        
         try {
+        	
+            String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
+            int entries = request.getParameter("entries") != null ? Integer.parseInt(request.getParameter("entries")) : 10;
+            int currentPage = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+            int offset = (currentPage - 1) * entries;
+            
 			List<VehicleDTO> vehicles = controller.getVehicles(searchQuery, entries, offset);
+			
 			request.setAttribute("vehicles", vehicles);
 	        request.setAttribute("page", currentPage);
-	        request.setAttribute("count", controller.getVehicleCount(searchQuery, entries, offset));
+	        request.setAttribute("count", controller.getVehicleCount(searchQuery));
 	        request.setAttribute("entries", entries);
 	        request.setAttribute("search", searchQuery);
-	        request.getRequestDispatcher("/admin/vehicles.jsp").forward(request, response);
+	        
+	        request.getRequestDispatcher("/dashboard/vehicles.jsp").forward(request, response);
+	        
 		} catch (SQLException e) {
+			
 			e.printStackTrace();
 	        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
+	        
+		} catch(NumberFormatException e) {
+			
+			e.printStackTrace();
+	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Request");
+	        
 		}
 	}
 
