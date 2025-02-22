@@ -6,9 +6,18 @@ public class Customer {
 	private String address;
 	private String nicNumber;
 	private String contactNumber;
+	private int userId;
     private boolean isDelete;
 	
 	public Customer() {
+	}
+	
+	public Customer(String customerName, String address, String nicNumber, String contactNumber) {
+		super();
+		this.customerName = customerName;
+		this.address = address;
+		this.nicNumber = nicNumber;
+		this.contactNumber = contactNumber;
 	}
 
 	public int getCustomerId() {
@@ -57,6 +66,14 @@ public class Customer {
 
 	public void setDelete(boolean isDelete) {
 		this.isDelete = isDelete;
+	}
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 	
 }

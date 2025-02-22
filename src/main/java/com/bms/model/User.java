@@ -21,6 +21,13 @@ public class User {
 		this.password = password;
 	}
 	
+	public User(String userName, String userEmail, String password) {
+		super();
+		this.userName = userName;
+		this.userEmail = userEmail;
+		this.password = password;
+	}
+
 	public User(int userId, String userName, String userEmail, AccountStatus accountStatus, AccountType accountType) {
 		super();
 		this.userId = userId;
