@@ -16,7 +16,7 @@
 
     <div class="container mt-4">
         <h2 class="mb-4 text-center">Add New Vehicle</h2>
-        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/admin/add-vehicle">
+        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/dashboard/add-vehicle">
             
             <!-- Vehicle Brand -->
             <div class="mb-3">
@@ -67,6 +67,12 @@
                 <input type="number" step="0.01" class="form-control" id="ratePerKM" placeholder="Enter rate per KM" name="ratePerKM" required>
             </div>
             
+            <!-- Rate Per Day -->
+            <div class="mb-3">
+                <label for="ratePerDay" class="form-label">Rate Per Day</label>
+                <input type="number" step="0.01" class="form-control" id="ratePerDay" placeholder="Enter rate per Day" name="ratePerDay" required>
+            </div>
+            
             <!-- Image -->
             <div class="mb-3">
                 <label for="vehicleImage" class="form-label">Vehicle Image</label>
@@ -79,5 +85,6 @@
             </div>
         </form>
     </div>
+    <jsp:include page="../components/footer.jsp"/>
 </body>
 </html>

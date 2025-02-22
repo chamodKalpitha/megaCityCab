@@ -35,8 +35,8 @@ public class UserController {
     	return userDAO.getUsers(search, limit, offset);
     }
     
-    public int getUserCount(String search, int limit, int offset) throws SQLException {
-    	return userDAO.getUsersCount(search, limit, offset);
+    public int getUserCount(String search) throws SQLException {
+    	return userDAO.getUsersCount(search);
     }
     
     public boolean deleteUser(int userId) throws SQLException {

@@ -17,7 +17,7 @@
     <div class="container mt-4">
         <h2 class="mb-4 text-center">Edit Booking</h2>
         
-        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/admin/update-booking">
+        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/dashboard/update-booking">
             <!-- Booking ID (Read-only) -->
             <div class="mb-3">
                 <label for="bookingId" class="form-label">Booking ID</label>
@@ -85,6 +85,7 @@
             </div>
         </form>
     </div>
+    <jsp:include page="../components/footer.jsp"/>
     <script>
     
     document.addEventListener("DOMContentLoaded", function () {

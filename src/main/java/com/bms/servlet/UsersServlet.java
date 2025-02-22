@@ -17,7 +17,7 @@ import com.bms.dto.UserDTO;
 import com.bms.enums.AccountType;
 import com.bms.utils.AuthUtils;
 
-@WebServlet("/admin/users")
+@WebServlet("/dashboard/users")
 public class UsersServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private UserController userController;
@@ -29,31 +29,44 @@ public class UsersServlet extends HttpServlet {
     }
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
+		
 		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN);
 		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
         if (!authorized) {
             return;
         }
-        String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
-        int entries = request.getParameter("entries") != null ? Integer.parseInt(request.getParameter("entries")) : 10;
-        int currentPage = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
-        int offset = (currentPage - 1) * entries;
-        
         
         try {
+        	
+            String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
+            int entries = request.getParameter("entries") != null ? Integer.parseInt(request.getParameter("entries")) : 10;
+            int currentPage = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+            int offset = (currentPage - 1) * entries;
+            
 			List<UserDTO> users = userController.getUsers(searchQuery, entries, offset);
+			
 			request.setAttribute("users", users);
 	        request.setAttribute("page", currentPage);
-	        request.setAttribute("count", userController.getUserCount(searchQuery, entries, offset));
+	        request.setAttribute("count", userController.getUserCount(searchQuery));
 	        request.setAttribute("entries", entries);
 	        request.setAttribute("search", searchQuery);
-	        request.getRequestDispatcher("/admin/users.jsp").forward(request, response);
+	        
+	        request.getRequestDispatcher("/dashboard/users.jsp").forward(request, response);
+	        
 		} catch (SQLException e) {
+			
 			e.printStackTrace();
 	        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
+	        
+		} catch(NumberFormatException e) {
+			
+			e.printStackTrace();
+	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Request");
+	        
 		}
 
 	}

@@ -31,8 +31,8 @@ public class DriverController {
         return driverDAO.getDrivers(search, limit, offset);
     }
 
-    public int getDriverCount(String search, int limit, int offset) throws SQLException {
-        return driverDAO.getDriversCount(search, limit, offset);
+    public int getDriverCount(String search) throws SQLException {
+        return driverDAO.getDriversCount(search);
     }
 
     public boolean deleteDriver(int driverId) throws SQLException {

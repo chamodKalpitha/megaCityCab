@@ -2,6 +2,7 @@ package com.bms.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -18,11 +19,12 @@ import com.bms.enums.AccountType;
 import com.bms.enums.VehicleStatus;
 import com.bms.enums.VehicleType;
 import com.bms.utils.AuthUtils;
+import com.bms.utils.InputValidator;
 
 /**
  * Servlet implementation class UpdateVehicleServlet
  */
-@WebServlet("/admin/update-vehicle")
+@WebServlet("/dashboard/update-vehicle")
 public class UpdateVehicleServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private VehicleController vehicleController;
@@ -35,27 +37,39 @@ public class UpdateVehicleServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if (!AuthUtils.isAuthenticated(request, response)) {
+		
+    	if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
+    	
 		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN,AccountType.MANAGER);
 		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
         if (!authorized) {
             return;
         }
-        int vehicleId = request.getParameter("vehicleId") != null ? Integer.parseInt(request.getParameter("vehicleId")) : 0;
-        if (vehicleId == 0) {
+         
+        Integer vehicleId = InputValidator.parseInteger(request.getParameter("vehicleId"));
+        if (vehicleId == null || vehicleId <= 0) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Vehicle ID");
             return;
         }
-
+        
         try {
+        	
             VehicleDTO vehicleDTO = vehicleController.getVehicleById(vehicleId);
+            if (Objects.isNull(vehicleDTO)) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Vehicle not found");
+                return;
+            }
+            
             request.setAttribute("vehicle", vehicleDTO);
-            request.getRequestDispatcher("/admin/update-vehicle.jsp?vehicleId=" + vehicleId).forward(request, response);
+            request.getRequestDispatcher("/dashboard/update-vehicle.jsp?vehicleId=" + vehicleId).forward(request, response);
+            
         } catch (SQLException e) {
+        	
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Something went wrong, try again!");
+            
         }
     }
 
@@ -91,19 +105,19 @@ public class UpdateVehicleServlet extends HttpServlet {
         try {
             boolean isUpdated = vehicleController.updateVehicle(vehicleDTO);
             if (isUpdated) {
-                response.sendRedirect(request.getContextPath() + "/admin/vehicles");
+                response.sendRedirect(request.getContextPath() + "/dashboard/vehicles");
             } else {
                 request.setAttribute("error", "Vehicle update failed!");
-                request.getRequestDispatcher("/admin/update-vehicle.jsp?vehicleId=" + vehicleId).forward(request, response);
+                request.getRequestDispatcher("/dashboard/update-vehicle.jsp?vehicleId=" + vehicleId).forward(request, response);
             }
         } catch (SQLException e) {
         	System.out.println(e);
             request.setAttribute("error", "An error occurred while updating the vehicle.");
-            request.getRequestDispatcher("/admin/update-vehicle.jsp?vehicleId=" + vehicleId).forward(request, response);
+            request.getRequestDispatcher("/dashboard/update-vehicle.jsp?vehicleId=" + vehicleId).forward(request, response);
         } catch (IllegalArgumentException e) {
         	System.out.println(e);
             request.setAttribute("error", "Invalid input provided.");
-            request.getRequestDispatcher("/admin/update-vehicle.jsp?vehicleId=" + vehicleId).forward(request, response);
+            request.getRequestDispatcher("/dashboard/update-vehicle.jsp?vehicleId=" + vehicleId).forward(request, response);
         }
     }
 

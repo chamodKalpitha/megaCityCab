@@ -17,7 +17,7 @@
     <div class="container mt-4">
         <h2 class="mb-4 text-center">Edit Driver</h2>
         
-        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/admin/update-driver">
+        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/dashboard/update-driver">
             <!-- Driver ID (Read-only) -->
             <div class="mb-3">
                 <label for="driverId" class="form-label">Driver ID</label>
@@ -53,9 +53,10 @@
             
             <!-- Update Button -->
             <div class="text-center">
-                <button type="submit" class="btn btn-primary w-100">Update Driver</button>
+                <button type="submit" class="btn btn-dark w-100">Update Driver</button>
             </div>
         </form>
     </div>
+    <jsp:include page="../components/footer.jsp"/>
 </body>
 </html>

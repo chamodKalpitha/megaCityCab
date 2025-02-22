@@ -17,7 +17,7 @@
     <div class="container mt-4">
         <h2 class="mb-4 text-center">Edit User</h2>
         
-        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/admin/update-user">
+        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/dashboard/update-user">
             <!-- User ID (Read-only) -->
             <div class="mb-3">
                 <label for="userId" class="form-label">User ID</label>
@@ -51,7 +51,6 @@
                 <select class="form-select" id="accountType" name="accountType" required>
                     <option value="STAFF" ${user.accountType == 'STAFF' ? 'selected' : ''}>Staff</option>
                     <option value="MANAGER" ${user.accountType == 'MANAGER' ? 'selected' : ''}>Manager</option>
-                    <option value="CUSTOMER" ${user.accountType == 'CUSTOMER' ? 'selected' : ''}>Customer</option>
                 </select>
             </div>
 
@@ -61,5 +60,6 @@
             </div>
         </form>
     </div>
+    <jsp:include page="../components/footer.jsp"/>
 </body>
 </html>

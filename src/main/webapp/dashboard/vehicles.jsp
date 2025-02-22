@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-	<title>Users</title>
+	<title>Vehicles</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -38,10 +38,13 @@
 	<jsp:include page="../components/menu-bar.jsp" />
 	<div class="container mt-4">
 	<div class="d-flex justify-content-between align-items-center mb-3">
-		<h2 class="mb-0">User Details</h2>
-		<a href="${pageContext.request.contextPath}/admin/add-user">
-			<button class="btn btn-dark"><i class="bi bi-plus-lg"></i> Add User</button>
-		</a> 
+		<h2 class="mb-0">Vehicle Details</h2>
+		<c:if test="${not empty sessionScope.accountType and sessionScope.accountType eq 'ADMIN' or sessionScope.accountType eq 'MANAGER'}">
+			<a href="${pageContext.request.contextPath}/dashboard/add-vehicle">
+				<button class="btn btn-dark"><i class="bi bi-plus-lg"></i> Add Vehicle</button>
+			</a> 
+		</c:if>
+		 
 	</div>
 		<div class="d-flex justify-content-end mb-3">
             <form class="d-flex me-2" method="GET">
@@ -56,25 +59,38 @@
 	            <thead class="table-light">
 	                <tr>
 	                    <th>No</th>
-	                    <th>Name</th>
-	                    <th>Email</th>
-	                    <th>Account Status</th>
+	                    <th>Image</th>
+	                    <th>Vehicle Brand</th>
+	                    <th>Vehicle Model</th>
+	                    <th>Vehicle Status</th>
+	                    <th>Vehicle Type</th>
 	                    <th>Action</th>
 	                </tr>
 	            </thead>
 	            <tbody>
 	            <c:choose>
-		            <c:when test="${not empty users}">
-		                <c:forEach var="user" items="${users}" varStatus="status">
+		            <c:when test="${not empty vehicles}">
+		                <c:forEach var="vehicle" items="${vehicles}" varStatus="status">
 		                    <tr>
 								<td>${(page - 1) * entries + status.index + 1}</td>
-		                        <td>${user.userName}</td>
-		                        <td>${user.userEmail}</td>
-		                        <td>${user.accountStatus}</td>
+								<td><img src="${vehicle.imageURLString}" class="img-fluid pointer" style="height: 40px; width: auto; cursor: pointer;" onclick="showImage('${vehicle.imageURLString}')"/></td>
+		                        <td>${vehicle.vehicleBrand}</td>
+		                        <td>${vehicle.vehicleModel}</td>
+		                        <td>${vehicle.vehicleStatus}</td>
+		                        <td>${vehicle.vehicleType}</td>
 		                        <td class="d-flex justify-content-center gap-2">
-			                        <a href="${pageContext.request.contextPath}/admin/update-user?userId=${user.userId}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
-			                        <button class="btn btn-sm btn-info" class="btn btn-sm btn-info" onclick="showUserDetails(${user.userId}, '${user.userName}', '${user.userEmail}', '${user.accountStatus}', '${user.accountType}')"><i class="bi bi-eye"></i></button>
-			                        <button class="btn btn-sm btn-danger" data-user-id="${user.userId}" onclick="handleDelete(${user.userId})"><i class="bi bi-trash"></i></button>
+                        		<c:if test="${not empty sessionScope.accountType and sessionScope.accountType eq 'ADMIN' or sessionScope.accountType eq 'MANAGER'}">
+									<a href="${pageContext.request.contextPath}/dashboard/update-vehicle?vehicleId=${vehicle.vehicleId}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
+			                        <button class="btn btn-sm btn-info" class="btn btn-sm btn-info" 
+			                        onclick="showVehicleDetails(${vehicle.vehicleId}, '${vehicle.vehicleBrand}', '${vehicle.vehicleModel}', '${vehicle.plateNumber}', ${vehicle.capacity}, '${vehicle.vehicleStatus}', '${vehicle.vehicleType}','${vehicle.ratePerKM}','${vehicle.ratePerDay}')"><i class="bi bi-eye"></i></button>
+			                        <button class="btn btn-sm btn-danger" data-user-id="${vehicle.vehicleId}" onclick="handleDelete(${vehicle.vehicleId})"><i class="bi bi-trash"></i></button>
+								</c:if>
+								
+								<c:if test="${not empty sessionScope.accountType and sessionScope.accountType eq 'STAFF'}">
+			                        <button class="btn btn-sm btn-info" class="btn btn-sm btn-info" 
+			                        onclick="showVehicleDetails(${vehicle.vehicleId}, '${vehicle.vehicleBrand}', '${vehicle.vehicleModel}', '${vehicle.plateNumber}', ${vehicle.capacity}, '${vehicle.vehicleStatus}', '${vehicle.vehicleType}','${vehicle.ratePerKM}','${vehicle.ratePerDay}')"><i class="bi bi-eye"></i></button>
+								</c:if>
+
 		                        </td>
 		                    </tr>
 		                </c:forEach>
@@ -119,6 +135,7 @@
             </div>
         </div>
 	</div>
+	<jsp:include page="../components/footer.jsp"/>
 	<c:if test="${message ne null}">
 	   <div class="alert alert-danger" role="alert">
 		${message}
@@ -127,7 +144,7 @@
 	<script>
 
 	function handleDelete(id){
-		const url = `${pageContext.request.contextPath}/admin/delete-user?search=<%= searchQuery %>&entries=<%= entries %>&page=<%= currentPage %>&userId=`+id;
+		const url = `${pageContext.request.contextPath}/dashboard/delete-vehicle?search=<%= searchQuery %>&entries=<%= entries %>&page=<%= currentPage %>&vehicleId=`+id;
 	
 		Swal.fire({
             title: "Are you sure?",
@@ -143,16 +160,20 @@
             }
         });
 	}
-	function showUserDetails(userId, username, useremail, accountStatus, accountType) {
+	function showVehicleDetails(vehicleId, vehicleBrand, vehicleModel, plateNumber, capacity, vehicleStatus,vehicleType,ratePerKM,ratePerDay) {
 	    Swal.fire({
-	        title: "User Details",
+	        title: "Vehicle Details",
 	        html: 
 	            "<div style='text-align: left;'>" +
-	                "<p><strong>User ID:</strong> " + userId + "</p>" +
-	                "<p><strong>Name:</strong> " + username + "</p>" +
-	                "<p><strong>Email:</strong> " + useremail + "</p>" +
-	                "<p><strong>Account Status:</strong> " + accountStatus + "</p>" +
-	                "<p><strong>Account Type:</strong> " + accountType + "</p>" +
+	                "<p><strong>Vehicle ID:</strong> " + vehicleId + "</p>" +
+	                "<p><strong>Vehicle Brand:</strong> " + vehicleBrand + "</p>" +
+	                "<p><strong>Vehicle Model:</strong> " + vehicleModel + "</p>" +
+	                "<p><strong>Plate Number:</strong> " + plateNumber + "</p>" +
+	                "<p><strong>Capacity:</strong> " + capacity + "</p>" +
+	                "<p><strong>Vehicle Status:</strong> " + vehicleStatus + "</p>" +
+	                "<p><strong>Vehicle Type:</strong> " + vehicleType + "</p>" +
+	                "<p><strong>Per KM:</strong> " + ratePerKM + "</p>" +
+	                "<p><strong>Per Day:</strong> " + ratePerDay + "</p>" +
 	            "</div>",
 	        icon: "info",
 	        confirmButtonText: "OK",
@@ -165,6 +186,12 @@
 	    });
 	}
 
+	function showImage(url){
+		Swal.fire({
+			  imageUrl: url,
+			  imageAlt: "image",
+			});
+	}
 
 
 </script>

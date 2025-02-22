@@ -19,7 +19,7 @@
 	<div class="container mt-4">
     <!-- Form Title -->
 	    <h2 class="mb-4 text-center">Add New User</h2>
-	    <form class="mx-auto" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/admin/add-user">
+	    <form class="mx-auto" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/dashboard/add-user">
 	        <!-- Name -->
 	        <div class="mb-3">
 	            <label for="name" class="form-label">Name</label>
@@ -46,6 +46,6 @@
 	        </div>
 	    </form>
 	</div>
-	
+	<jsp:include page="../components/footer.jsp"/>
 </body>
 </html>

@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -28,8 +29,9 @@ import com.bms.dto.VehicleDTO;
 import com.bms.enums.BookingStatus;
 import com.bms.enums.PricingType;
 import com.bms.utils.AuthUtils;
+import com.bms.utils.InputValidator;
 
-@WebServlet("/admin/update-booking")
+@WebServlet("/dashboard/update-booking")
 public class UpdateBookingServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private BookingController bookingController;
@@ -40,10 +42,10 @@ public class UpdateBookingServlet extends HttpServlet {
     public void init() {
         BookingDAO bookingDAO = new BookingDAOImpl();
         this.bookingController = new BookingController(bookingDAO);
-        
+
         VehicleDAO vehicleDAO = new VehicleDAOImpl();
         this.vehicleController = new VehicleController(vehicleDAO);
-        
+
         DriverDAO driverDAO = new DriverDAOImpl();
         this.driverController = new DriverController(driverDAO);
     }
@@ -54,75 +56,103 @@ public class UpdateBookingServlet extends HttpServlet {
             return;
         }
 
-        int bookingId = request.getParameter("bookingId") != null ? Integer.parseInt(request.getParameter("bookingId")) : 0;
-        if (bookingId == 0) {
+        Integer bookingId = InputValidator.parseInteger(request.getParameter("bookingId"));
+        if (bookingId == null || bookingId <= 0) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Booking ID");
             return;
         }
 
         try {
+        	
             BookingDTO bookingDTO = bookingController.getBookingById(bookingId);
+            if (Objects.isNull(bookingDTO)) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Booking not found");
+                return;
+            }
+
             List<VehicleDTO> vehicles = vehicleController.getVehiclesNumberPlate();
             List<DriverDTO> drivers = driverController.getDriversID();
+            
             request.setAttribute("booking", bookingDTO);
             request.setAttribute("vehicles", vehicles);
             request.setAttribute("drivers", drivers);
-            request.getRequestDispatcher("/admin/update-booking.jsp?bookingId=" + bookingId).forward(request, response);
+            
+            request.getRequestDispatcher("/dashboard/update-booking.jsp?bookingId=" + bookingId).forward(request, response);
+            
         } catch (SQLException e) {
+        	
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Something went wrong, try again!");
+            
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        BookingDTO bookingDTO;
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
-        
-        int bookingId = request.getParameter("bookingId") != null ? Integer.parseInt(request.getParameter("bookingId")) : 0;
-        if (bookingId == 0) {
+
+        Integer bookingId = InputValidator.parseInteger(request.getParameter("bookingId"));
+        if (bookingId == null || bookingId <= 0) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Booking ID");
             return;
         }
 
-        int bookedVehicleId = Integer.parseInt(request.getParameter("bookedVehicleId"));
+        Integer bookedVehicleId = InputValidator.parseInteger(request.getParameter("bookedVehicleId"));
+        if (bookedVehicleId == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Vehicle ID");
+            return;
+        }
+
         Date bookingDate;
-        
         try {
-            bookingDate = formatter.parse(request.getParameter("bookingDate"));
+            bookingDate = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("bookingDate"));
         } catch (ParseException e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid booking date format");
             return;
         }
 
-        BookingStatus bookingStatus = BookingStatus.valueOf(request.getParameter("bookingStatus"));
-        PricingType pricingType = PricingType.valueOf(request.getParameter("pricingType"));
-        
+        BookingStatus bookingStatus;
+        PricingType pricingType;
+        try {
+            bookingStatus = BookingStatus.valueOf(request.getParameter("bookingStatus"));
+            pricingType = PricingType.valueOf(request.getParameter("pricingType"));
+        } catch (IllegalArgumentException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid booking status or pricing type");
+            return;
+        }
+
+        BookingDTO bookingDTO;
         if (pricingType == PricingType.PER_DAY_WITH_DRIVER || pricingType == PricingType.PER_KM_WITH_DRIVER) {
-            Integer driverId = Integer.parseInt(request.getParameter("driverId"));
+            Integer driverId = InputValidator.parseInteger(request.getParameter("driverId"));
+            if (driverId == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Driver ID");
+                return;
+            }
             bookingDTO = new BookingDTO(bookingId, bookedVehicleId, driverId, bookingDate, bookingStatus, pricingType);
         } else {
             bookingDTO = new BookingDTO(bookingId, bookedVehicleId, bookingDate, bookingStatus, pricingType);
         }
 
         try {
+            BookingDTO existingBooking = bookingController.getBookingById(bookingId);
+            if (Objects.isNull(existingBooking)) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Booking not found");
+                return;
+            }
+
             boolean isUpdated = bookingController.updateBooking(bookingDTO);
             if (isUpdated) {
-                response.sendRedirect(request.getContextPath() + "/admin/bookings");
+                response.sendRedirect(request.getContextPath() + "/dashboard/bookings");
             } else {
                 request.setAttribute("error", "Booking update failed!");
-                request.getRequestDispatcher("/admin/update-booking.jsp?bookingId=" + bookingId).forward(request, response);
+                request.getRequestDispatcher("/dashboard/update-booking.jsp?bookingId=" + bookingId).forward(request, response);
             }
         } catch (SQLException e) {
             request.setAttribute("error", "An error occurred while updating the booking.");
-            request.getRequestDispatcher("/admin/update-booking.jsp?bookingId=" + bookingId).forward(request, response);
-        } catch (IllegalArgumentException e) {
-            request.setAttribute("error", "Invalid input provided.");
-            request.getRequestDispatcher("/admin/update-booking.jsp?bookingId=" + bookingId).forward(request, response);
+            request.getRequestDispatcher("/dashboard/update-booking.jsp?bookingId=" + bookingId).forward(request, response);
         }
     }
 }

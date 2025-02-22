@@ -19,39 +19,50 @@ import com.bms.utils.AuthUtils;
 /**
  * Servlet implementation class DeleteUser
  */
-@WebServlet("/admin/delete-user")
+@WebServlet("/dashboard/delete-user")
 public class DeleteUserServlet extends HttpServlet {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private UserController userController;
+	
     public DeleteUserServlet() {
         UserDAO userDAO = new UserDAOImpl();
         this.userController = new UserController(userDAO);
     }
+    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
+		
 		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN);
 		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
-		
         if (!authorized) {
             return;
         }
-        String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
-        int entries = request.getParameter("entries") != null ? Integer.parseInt(request.getParameter("entries")) : 10;
-        int userId = request.getParameter("userId") != null ? Integer.parseInt(request.getParameter("userId")) : 0;
         
         try {
+        	
+            String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
+            int entries = request.getParameter("entries") != null ? Integer.parseInt(request.getParameter("entries")) : 10;
+            int userId = request.getParameter("userId") != null ? Integer.parseInt(request.getParameter("userId")) : 0;
+            
 			boolean isDeleted = userController.deleteUser(userId);
 			if(isDeleted) {
-				response.sendRedirect(request.getContextPath()+"/admin/users?search="+searchQuery+"&entries="+entries); 
+				response.sendRedirect(request.getContextPath()+"/dashboard/users?search="+searchQuery+"&entries="+entries); 
 			}
+			
 		} catch (SQLException e) {
-	        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
+			
 			e.printStackTrace();
+	        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
+						
+		} catch(NumberFormatException e) {
+			
+			e.printStackTrace();
+	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Request");
+	        
 		}
 	}
 }

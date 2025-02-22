@@ -71,7 +71,7 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 	@Override
-	public int getUsersCount(String search, int limit, int offset) throws SQLException {
+	public int getUsersCount(String search) throws SQLException {
 		String sql = "SELECT COUNT(*) FROM app_user WHERE (LOWER(user_name) LIKE LOWER(?) " +
 	             "OR LOWER(user_name) LIKE LOWER(?) OR LOWER(user_id) LIKE LOWER(?)) " +
 	             "AND is_delete != 1 AND account_type != 'ADMIN' ORDER BY user_id ASC";

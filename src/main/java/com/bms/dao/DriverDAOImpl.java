@@ -59,7 +59,7 @@ public class DriverDAOImpl implements DriverDAO {
     }
 
     @Override
-    public int getDriversCount(String search, int limit, int offset) throws SQLException {
+    public int getDriversCount(String search) throws SQLException {
         String sql = "SELECT COUNT(*) FROM driver WHERE (LOWER(driver_name) LIKE LOWER(?) OR LOWER(nic_number) LIKE LOWER(?)) AND is_delete != 1";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             String searchParam = "%" + search + "%";
