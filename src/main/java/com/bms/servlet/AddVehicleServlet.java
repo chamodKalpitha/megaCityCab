@@ -2,6 +2,7 @@ package com.bms.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -18,11 +19,9 @@ import com.bms.enums.AccountType;
 import com.bms.enums.VehicleStatus;
 import com.bms.enums.VehicleType;
 import com.bms.utils.AuthUtils;
+import com.bms.utils.InputValidator;
 
-/**
- * Servlet implementation class AddVehicleServlet
- */
-@WebServlet("/admin/add-vehicle")
+@WebServlet("/dashboard/add-vehicle")
 public class AddVehicleServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private VehicleController vehicleController;
@@ -33,57 +32,69 @@ public class AddVehicleServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if (!AuthUtils.isAuthenticated(request, response)) {
+		
+    	if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
+    	
 		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN, AccountType.MANAGER);
 		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
-		
-        if (!authorized) {
+		if (!authorized) {
             return;
         }
-        response.sendRedirect(request.getContextPath() + "/admin/new-vehicle.jsp");
+		
+        response.sendRedirect(request.getContextPath() + "/dashboard/new-vehicle.jsp");
     }
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if (!AuthUtils.isAuthenticated(request, response)) {
+		
+    	if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
+    	
 		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN, AccountType.MANAGER);
 		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
-		
-        if (!authorized) {
+		if (!authorized) {
             return;
         }
+		
         String vehicleBrand = request.getParameter("vehicleBrand");
         String vehicleModel = request.getParameter("vehicleModel");
         String plateNumber = request.getParameter("plateNumber");
-        int capacity = Integer.parseInt(request.getParameter("capacity"));
-        VehicleStatus vehicleStatus = VehicleStatus.valueOf(request.getParameter("vehicleStatus"));
-        VehicleType vehicleType = VehicleType.valueOf(request.getParameter("vehicleType"));
-        double ratePerKM = Double.parseDouble(request.getParameter("ratePerKM"));
-        double ratePerDay = Double.parseDouble(request.getParameter("ratePerDay"));
+        int capacity = InputValidator.parseInteger(request.getParameter("capacity"));
+        VehicleStatus vehicleStatus = InputValidator.parseVehicleStatus(request.getParameter("vehicleStatus"));
+        VehicleType vehicleType = InputValidator.parseVehicleType(request.getParameter("vehicleType"));
+        double ratePerKM = InputValidator.parseDouble(request.getParameter("ratePerKM"));
+        double ratePerDay = InputValidator.parseDouble(request.getParameter("ratePerDay"));
         String vahicleImage = request.getParameter("vehicleImage");
-
-        VehicleDTO vehicleDTO = new VehicleDTO(vehicleBrand, vehicleModel, plateNumber, capacity, vehicleStatus, vehicleType, vahicleImage, ratePerKM,ratePerDay);
         
+        if(Objects.isNull(vehicleBrand) || Objects.isNull(vehicleModel) || Objects.isNull(plateNumber) || Objects.isNull(capacity) || Objects.isNull(vehicleStatus) ||
+        		Objects.isNull(vehicleType) || Objects.isNull(ratePerKM) || Objects.isNull(ratePerDay) || Objects.isNull(vahicleImage)
+        		|| vehicleBrand.isBlank() || vehicleModel.isBlank() || plateNumber.isBlank() || vahicleImage.isBlank()) {
+        	request.setAttribute("error", "All fields are required.");
+        	request.getRequestDispatcher("/dashboard/new-vehicle.jsp").forward(request, response);
+        }
+             
         try {
+        	
+            VehicleDTO vehicleDTO = new VehicleDTO(vehicleBrand, vehicleModel, plateNumber, capacity, vehicleStatus, vehicleType, vahicleImage, ratePerKM,ratePerDay);
             boolean isCreated = vehicleController.createVehicle(vehicleDTO);
+            
             if (isCreated) {
-                response.sendRedirect(request.getContextPath() + "/admin/vehicles"); 
-            } else {
-                request.setAttribute("error", "Vehicle creation failed!");
-                request.getRequestDispatcher("/admin/new-vehicle.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/dashboard/vehicles"); 
             }
+            
         } catch (SQLException e) {
+        	
             if (e.getErrorCode() == 1062) {
                 request.setAttribute("error", "Duplicate plate number. Please enter a different plate number.");
-                request.getRequestDispatcher("/admin/new-vehicle.jsp").forward(request, response);
+                request.getRequestDispatcher("/dashboard/new-vehicle.jsp").forward(request, response);
                 return;
             }
-            request.setAttribute("error", "An error occurred while adding the vehicle.");
-            request.getRequestDispatcher("/admin/new-vehicle.jsp").forward(request, response);
+            
+        	e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
         }
     }
 
