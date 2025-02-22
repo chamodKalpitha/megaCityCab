@@ -19,7 +19,7 @@ import com.bms.utils.AuthUtils;
 /**
  * Servlet implementation class DeleteDriverServlet
  */
-@WebServlet("/admin/delete-driver")
+@WebServlet("/dashboard/delete-driver")
 public class DeleteDriverServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private DriverController driverController;
@@ -30,31 +30,40 @@ public class DeleteDriverServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	
         if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
+        
 		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN, AccountType.MANAGER);
 		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
-		
         if (!authorized) {
             return;
         }
 
-        String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
-        int entries = request.getParameter("entries") != null ? Integer.parseInt(request.getParameter("entries")) : 10;
-        int driverId = request.getParameter("driverId") != null ? Integer.parseInt(request.getParameter("driverId")) : 0;
-
         try {
+        	
+            String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
+            int entries = request.getParameter("entries") != null ? Integer.parseInt(request.getParameter("entries")) : 10;
+            int driverId = request.getParameter("driverId") != null ? Integer.parseInt(request.getParameter("driverId")) : 0;
+            
             boolean isDeleted = driverController.deleteDriver(driverId);
             
             if (isDeleted) {
-                response.sendRedirect(request.getContextPath() + "/admin/drivers?search=" + searchQuery + "&entries=" + entries);
-            } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Failed to delete driver");
-            }
+                response.sendRedirect(request.getContextPath() + "/dashboard/drivers?search=" + searchQuery + "&entries=" + entries);
+                return;
+            } 
+            
         } catch (SQLException e) {
+        	
+        	e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
-            e.printStackTrace();
-        }
+                        
+        } catch(NumberFormatException e) {
+			
+			e.printStackTrace();
+	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Request");
+	        
+		}
     }
 }
