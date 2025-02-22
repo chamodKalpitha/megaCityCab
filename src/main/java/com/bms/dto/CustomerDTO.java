@@ -1,20 +1,38 @@
 package com.bms.dto;
 
 public class CustomerDTO {
-	private int customerId;
-	private String customerName;
-	private String address;
-	private String nicNumber;
-	private String contactNumber;
-    private boolean isDelete;
-	
-	public CustomerDTO() {
+    private int customerId;
+    private String customerName;
+    private String address;
+    private String nicNumber;
+    private String contactNumber;
+    private int userId;
+
+    public CustomerDTO() {}
+
+    public CustomerDTO(int customerId, String customerName, String address, String nicNumber, String contactNumber,
+			int userId) {
+		super();
+		this.customerId = customerId;
+		this.customerName = customerName;
+		this.address = address;
+		this.nicNumber = nicNumber;
+		this.contactNumber = contactNumber;
+		this.userId = userId;
 	}
-	
-	
+    
+    
 
 	public CustomerDTO(int customerId, String customerName, String address, String nicNumber, String contactNumber) {
+		super();
 		this.customerId = customerId;
+		this.customerName = customerName;
+		this.address = address;
+		this.nicNumber = nicNumber;
+		this.contactNumber = contactNumber;
+	}
+
+	public CustomerDTO(String customerName, String address, String nicNumber, String contactNumber) {
 		this.customerName = customerName;
 		this.address = address;
 		this.nicNumber = nicNumber;
@@ -61,12 +79,12 @@ public class CustomerDTO {
 		this.contactNumber = contactNumber;
 	}
 
-	public boolean isDelete() {
-		return isDelete;
+	public int getUserId() {
+		return userId;
 	}
 
-	public void setDelete(boolean isDelete) {
-		this.isDelete = isDelete;
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
-	
+
 }

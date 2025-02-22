@@ -1,6 +1,7 @@
 package com.bms.servlet;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,6 +15,7 @@ import com.bms.dao.LoginDAO;
 import com.bms.dao.LoginDAOImpl;
 import com.bms.dto.LoginDTO;
 import com.bms.enums.AccountType;
+import com.bms.utils.InputValidator;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
@@ -37,17 +39,42 @@ public class LoginServlet extends HttpServlet {
 	                response.sendRedirect("dashboard/users");
 	                return;
 	            } 
+	            
+	            if (accountType.equals(AccountType.CUSTOMER)) {
+	                response.sendRedirect(request.getContextPath()+"/vehicles");
+	                return;
+	            } 
 	        }
 	    }
 	    request.getRequestDispatcher("/login.jsp").forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String email = request.getParameter("email");
+		
+        String userEmail = request.getParameter("email");
         String password = request.getParameter("password");
+        
+        if(Objects.isNull(userEmail) || userEmail.isBlank() || Objects.isNull(password) || password.isBlank()) {
+        	request.setAttribute("error", "All fields are required.");
+        	request.getRequestDispatcher("/customer/register.jsp").forward(request, response);
+        }
+        
+        if(Objects.isNull(InputValidator.isValidEmail(userEmail))) {
+            request.setAttribute("error", "Invalid Email");
+            request.getRequestDispatcher("/customer/register.jsp").forward(request, response);
+            return;
+        }
+        
+        if(Objects.isNull(InputValidator.isValidPassword(password))) {
+            request.setAttribute("error", "Invalid email or password");
+            request.getRequestDispatcher("/customer/register.jsp").forward(request, response);
+            return;
+        }
+        
+        
         HttpSession session = request.getSession();
         LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setEmail(email);
+        loginDTO.setEmail(userEmail);
         loginDTO.setPassword(password);
 
         try {
@@ -65,14 +92,17 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath()+"/dashboard/users"); 
             }
             
+            if(responseLoginDTO.getAccountType() == AccountType.CUSTOMER) {
+            	session.setAttribute("accountType", responseLoginDTO.getAccountType());
+            	session.setAttribute("email", responseLoginDTO.getEmail());
+                response.sendRedirect(request.getContextPath()+"/vehicles"); 
+            }
+            
         } catch (SQLException e) {
-            System.out.println(e);
-            request.setAttribute("error", "Internal Server Error");
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
-        } catch (IllegalArgumentException e) {
-            System.out.println(e);
-            request.setAttribute("error", "Bad Request");
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
+        	
+			e.printStackTrace();
+	        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
+	        
         }
     }
 
