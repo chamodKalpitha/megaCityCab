@@ -33,7 +33,7 @@ public class VehicleDAOImpl implements VehicleDAO {
             stmt.setString(5, vehicle.getVehicleStatus().name());
             stmt.setString(6, vehicle.getVehicleType().name());
             stmt.setDouble(7, vehicle.getRatePerKM());
-            stmt.setDouble(9, vehicle.getRatePerDay());
+            stmt.setDouble(8, vehicle.getRatePerDay());
             stmt.setString(9, vehicle.getImageURLString());
             stmt.executeUpdate();
             return true;
@@ -70,7 +70,7 @@ public class VehicleDAOImpl implements VehicleDAO {
     }
     
     @Override
-    public int getVehiclesCount(String search, int limit, int offset) throws SQLException {
+    public int getVehiclesCount(String search) throws SQLException {
         String sql = "SELECT COUNT(*) FROM vehicle WHERE (LOWER(vehicle_brand) LIKE LOWER(?) OR LOWER(plate_number) LIKE LOWER(?)) AND is_delete != 1";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             String searchParam = "%" + search + "%";
