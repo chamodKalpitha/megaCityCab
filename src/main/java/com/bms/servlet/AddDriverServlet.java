@@ -2,6 +2,7 @@ package com.bms.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -20,7 +21,7 @@ import com.bms.utils.AuthUtils;
 /**
  * Servlet implementation class AddDriverServlet
  */
-@WebServlet("/admin/add-driver")
+@WebServlet("/dashboard/add-driver")
 public class AddDriverServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private DriverController driverController;
@@ -29,59 +30,66 @@ public class AddDriverServlet extends HttpServlet {
         DriverDAO driverDAO = new DriverDAOImpl();
         this.driverController = new DriverController(driverDAO);
     }
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
 		
 		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN, AccountType.MANAGER);
 		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
-		
         if (!authorized) {
             return;
         }
-        response.sendRedirect(request.getContextPath() + "/admin/new-driver.jsp");
+        
+        response.sendRedirect(request.getContextPath() + "/dashboard/new-driver.jsp");
 
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
+		
 		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN, AccountType.MANAGER);
 		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
-		
         if (!authorized) {
             return;
         }
+        
 		String driverName = request.getParameter("driverName");
         String nicNumber = request.getParameter("nicNumber");
         String contactNumber = request.getParameter("contactNumber");
+        
+        if(Objects.isNull(driverName) || driverName.isBlank() || Objects.isNull(nicNumber) || nicNumber.isBlank() || Objects.isNull(contactNumber) || contactNumber.isBlank()) {
+	        request.setAttribute("error", "All fields are required.");
+	        request.getRequestDispatcher("/dashboard/new-driver.jsp").forward(request, response);
+	        return;
+        }
 
-        DriverDTO driverDTO = new DriverDTO(driverName, nicNumber, contactNumber);
         
         try {
+        	
+            DriverDTO driverDTO = new DriverDTO(driverName, nicNumber, contactNumber);
             boolean isCreated = driverController.createDriver(driverDTO);
+            
             if (isCreated) {
-                response.sendRedirect(request.getContextPath() + "/admin/drivers"); 
-            } else {
-                request.setAttribute("error", "Driver creation failed!");
-                request.getRequestDispatcher("/admin/new-driver.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/dashboard/drivers"); 
             }
+            
         } catch (SQLException e) {
+        	
             if (e.getErrorCode() == 1062) {
                 request.setAttribute("error", "Duplicate NIC or Contact Number. Please enter different details.");
-                request.getRequestDispatcher("/admin/new-driver.jsp").forward(request, response);
+                request.getRequestDispatcher("/dashboard/new-driver.jsp").forward(request, response);
                 return;
             }
-            request.setAttribute("error", "An error occurred while adding the driver.");
-            request.getRequestDispatcher("/admin/new-driver.jsp").forward(request, response);
+            
+        	e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
         }
     }
 	
