@@ -34,9 +34,9 @@ public class LoginServlet extends HttpServlet {
 	        if (accountTypeObject != null) {
 	 	            AccountType accountType = AccountType.valueOf(accountTypeObject.toString());
 	            if (accountType.equals(AccountType.ADMIN)) {
-	                response.sendRedirect("admin/users");
+	                response.sendRedirect("dashboard/users");
 	                return;
-	            }
+	            } 
 	        }
 	    }
 	    request.getRequestDispatcher("/login.jsp").forward(request, response);
@@ -62,7 +62,7 @@ public class LoginServlet extends HttpServlet {
             if(responseLoginDTO.getAccountType() == AccountType.ADMIN) {
             	session.setAttribute("accountType", responseLoginDTO.getAccountType());
             	session.setAttribute("email", responseLoginDTO.getEmail());
-                response.sendRedirect(request.getContextPath()+"/admin/users"); 
+                response.sendRedirect(request.getContextPath()+"/dashboard/users"); 
             }
             
         } catch (SQLException e) {
