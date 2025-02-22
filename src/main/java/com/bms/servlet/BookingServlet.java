@@ -25,7 +25,7 @@ import com.bms.utils.AuthUtils;
 /**
  * Servlet implementation class Booking
  */
-@WebServlet("/admin/bookings")
+@WebServlet("/dashboard/bookings")
 public class BookingServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private BookingController controller;  
@@ -40,29 +40,39 @@ public class BookingServlet extends HttpServlet {
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
+		
 		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN, AccountType.MANAGER, AccountType.STAFF);
 		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
-		
         if (!authorized) {
             return;
         }
-        String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
-        int entries = request.getParameter("entries") != null ? Integer.parseInt(request.getParameter("entries")) : 10;
-        int currentPage = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
-        int offset = (currentPage - 1) * entries;
-        
-        
+           
         try {
+        	
+            String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
+            int entries = request.getParameter("entries") != null ? Integer.parseInt(request.getParameter("entries")) : 10;
+            int currentPage = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+            int offset = (currentPage - 1) * entries;
+            
 			List<BookingDTO> bookings = controller.getBookings(searchQuery, entries, offset);
+			
 			request.setAttribute("bookings", bookings);
 	        request.setAttribute("page", currentPage);
 	        request.setAttribute("count", controller.getBookingsCount(searchQuery));
 	        request.setAttribute("entries", entries);
 	        request.setAttribute("search", searchQuery);
-	        request.getRequestDispatcher("/admin/bookings.jsp").forward(request, response);
+	        
+	        request.getRequestDispatcher("/dashboard/bookings.jsp").forward(request, response);
 		} catch (SQLException e) {
+			
 			e.printStackTrace();
 	        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
+	        
+		} catch(NumberFormatException e) {
+			
+			e.printStackTrace();
+	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Request");
+	        
 		}
 	}
 
