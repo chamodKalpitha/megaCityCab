@@ -24,8 +24,8 @@ public class VehicleController {
         return vehicleDAO.getVehicles(search, limit, offset);
     }
 
-    public int getVehicleCount(String search, int limit, int offset) throws SQLException {
-        return vehicleDAO.getVehiclesCount(search, limit, offset);
+    public int getVehicleCount(String search) throws SQLException {
+        return vehicleDAO.getVehiclesCount(search);
     }
 
     public VehicleDTO getVehicleById(int vehicleId) throws SQLException {
