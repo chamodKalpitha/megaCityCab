@@ -2,6 +2,10 @@ package com.bms.utils;
 
 import java.util.regex.Pattern;
 
+import com.bms.enums.AccountType;
+import com.bms.enums.VehicleStatus;
+import com.bms.enums.VehicleType;
+
 public class InputValidator {
 
 
@@ -41,4 +45,54 @@ public class InputValidator {
             throw new IllegalArgumentException("Invalid phone number format. It must be exactly 10 digits.");
         }
     }
+    
+    public static Integer parseInteger(String value) {
+        try {
+            return (value != null) ? Integer.parseInt(value) : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+    
+    public static Double parseDouble(String value) {
+        try {
+            return (value != null) ? Double.parseDouble(value) : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+    
+    public static AccountType parseAccountType(String value) {
+        if (value == null || value.isEmpty()) {
+            return null; 
+        }
+        try {
+            return AccountType.valueOf(value.toUpperCase()); 
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+    
+    public static VehicleStatus parseVehicleStatus(String value) {
+        if (value == null || value.isEmpty()) {
+            return null; 
+        }
+        try {
+            return VehicleStatus.valueOf(value.toUpperCase()); 
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+    
+    public static VehicleType parseVehicleType(String value) {
+        if (value == null || value.isEmpty()) {
+            return null; 
+        }
+        try {
+            return VehicleType.valueOf(value.toUpperCase()); 
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+    
 }
