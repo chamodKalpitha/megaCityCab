@@ -61,7 +61,7 @@
                     
                     <c:if test="${sessionScope.accountType eq null}">
                         <li class="nav-item"><a class="nav-link" href="/megaCityCab/">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="vehicles">Vehicles</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/megaCityCab/vehicles">Vehicles</a></li>
                     </c:if>
                     
                 </ul>
