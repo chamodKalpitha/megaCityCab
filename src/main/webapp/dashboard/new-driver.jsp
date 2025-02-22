@@ -16,7 +16,7 @@
 
     <div class="container mt-4">
         <h2 class="mb-4 text-center">Add New Driver</h2>
-        <form class="mx-auto" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/admin/add-driver">
+        <form class="mx-auto" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/dashboard/add-driver">
             
             <!-- Driver Name -->
             <div class="mb-3">
@@ -42,5 +42,6 @@
             </div>
         </form>
     </div>
+    <jsp:include page="../components/footer.jsp"/>
 </body>
 </html>

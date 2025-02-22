@@ -39,7 +39,7 @@
 	<div class="container mt-4">
 	<div class="d-flex justify-content-between align-items-center mb-3">
 		<h2 class="mb-0">Booking Details</h2>
-		<a href="${pageContext.request.contextPath}/admin/add-booking">
+		<a href="${pageContext.request.contextPath}/dashboard/add-booking">
 			<button class="btn btn-dark d-none"><i class="bi bi-plus-lg"></i> Add Booking</button>
 		</a> 
 	</div>
@@ -91,7 +91,7 @@
 								    ${booking.pricingType}
 								</td>
 		                        <td class="d-flex justify-content-center gap-2 h-full">
-			                        <a href="${pageContext.request.contextPath}/admin/update-booking?bookingId=${booking.bookingId}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
+			                        <a href="${pageContext.request.contextPath}/dashboard/update-booking?bookingId=${booking.bookingId}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
 			                        <button class="btn btn-sm btn-info" class="btn btn-sm btn-info" 
 			                        onclick="showBookingDetails(${booking.bookingId}, ${booking.customerId}, ${booking.bookedVehicleId}, '${booking.bookingDate}', '${booking.bookingStatus}', '${driverIdValue}', ' ${booking.pricingType}')"><i class="bi bi-eye"></i></button>
 			                        <button class="btn btn-sm btn-danger" data-user-id="${booking.bookingId}" onclick="handleDelete(${booking.bookingId})"><i class="bi bi-trash"></i></button>
@@ -139,6 +139,7 @@
             </div>
         </div>
 	</div>
+	<jsp:include page="../components/footer.jsp"/>
 	<c:if test="${message ne null}">
 	   <div class="alert alert-danger" role="alert">
 		${message}
@@ -147,7 +148,7 @@
 	<script>
 
 	function handleDelete(id){
-		const url = `${pageContext.request.contextPath}/admin/delete-booking?search=<%= searchQuery %>&entries=<%= entries %>&page=<%= currentPage %>&bookingId=`+id;
+		const url = `${pageContext.request.contextPath}/dashboard/delete-booking?search=<%= searchQuery %>&entries=<%= entries %>&page=<%= currentPage %>&bookingId=`+id;
 	
 		Swal.fire({
             title: "Are you sure?",

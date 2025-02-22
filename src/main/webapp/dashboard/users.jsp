@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-	<title>Drivers</title>
+	<title>Users</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -38,10 +38,10 @@
 	<jsp:include page="../components/menu-bar.jsp" />
 	<div class="container mt-4">
 	<div class="d-flex justify-content-between align-items-center mb-3">
-		<h2 class="mb-0">Driver Details</h2>
-		<a href="${pageContext.request.contextPath}/admin/add-driver">
-			<button class="btn btn-dark"><i class="bi bi-plus-lg"></i> Add Driver</button>
-		</a> 
+		<h2 class="mb-0">User Details</h2>
+	    <a href="${pageContext.request.contextPath}/dashboard/add-user">
+	        <button class="btn btn-dark"><i class="bi bi-plus-lg"></i> Add User</button>
+	    </a> 
 	</div>
 		<div class="d-flex justify-content-end mb-3">
             <form class="d-flex me-2" method="GET">
@@ -57,24 +57,24 @@
 	                <tr>
 	                    <th>No</th>
 	                    <th>Name</th>
-	                    <th>Contact Number</th>
-	                    <th>Status</th>
+	                    <th>Email</th>
+	                    <th>Account Status</th>
 	                    <th>Action</th>
 	                </tr>
 	            </thead>
 	            <tbody>
 	            <c:choose>
-		            <c:when test="${not empty drivers}">
-		                <c:forEach var="driver" items="${drivers}" varStatus="status">
+		            <c:when test="${not empty users}">
+		                <c:forEach var="user" items="${users}" varStatus="status">
 		                    <tr>
 								<td>${(page - 1) * entries + status.index + 1}</td>
-		                        <td>${driver.driverName}</td>
-		                        <td>${driver.contactNumber}</td>
-		                        <td>${driver.driverStatus}</td>
+		                        <td>${user.userName}</td>
+		                        <td>${user.userEmail}</td>
+		                        <td>${user.accountStatus}</td>
 		                        <td class="d-flex justify-content-center gap-2">
-			                        <a href="${pageContext.request.contextPath}/admin/update-driver?driverId=${driver.driverId}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
-			                        <button class="btn btn-sm btn-info" class="btn btn-sm btn-info" onclick="showDriverDetails(${driver.driverId}, '${driver.driverName}', '${driver.contactNumber}', '${driver.driverStatus}', '${driver.nicNumber}')"><i class="bi bi-eye"></i></button>
-			                        <button class="btn btn-sm btn-danger" data-user-id="${driver.driverId}" onclick="handleDelete(${driver.driverId})"><i class="bi bi-trash"></i></button>
+			                        <a href="${pageContext.request.contextPath}/dashboard/update-user?userId=${user.userId}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
+			                        <button class="btn btn-sm btn-info" class="btn btn-sm btn-info" onclick="showUserDetails(${user.userId}, '${user.userName}', '${user.userEmail}', '${user.accountStatus}', '${user.accountType}')"><i class="bi bi-eye"></i></button>
+			                        <button class="btn btn-sm btn-danger" data-user-id="${user.userId}" onclick="handleDelete(${user.userId})"><i class="bi bi-trash"></i></button>
 		                        </td>
 		                    </tr>
 		                </c:forEach>
@@ -119,6 +119,7 @@
             </div>
         </div>
 	</div>
+	<jsp:include page="../components/footer.jsp"/>
 	<c:if test="${message ne null}">
 	   <div class="alert alert-danger" role="alert">
 		${message}
@@ -127,7 +128,7 @@
 	<script>
 
 	function handleDelete(id){
-		const url = `${pageContext.request.contextPath}/admin/delete-driver?search=<%= searchQuery %>&entries=<%= entries %>&page=<%= currentPage %>&driverId=`+id;
+		const url = `${pageContext.request.contextPath}/dashboard/delete-user?search=<%= searchQuery %>&entries=<%= entries %>&page=<%= currentPage %>&userId=`+id;
 	
 		Swal.fire({
             title: "Are you sure?",
@@ -143,16 +144,16 @@
             }
         });
 	}
-	function showDriverDetails(id, name, contactNumber, status, nicNumber) {
+	function showUserDetails(userId, username, useremail, accountStatus, accountType) {
 	    Swal.fire({
-	        title: "Driver Details",
+	        title: "User Details",
 	        html: 
 	            "<div style='text-align: left;'>" +
-	                "<p><strong>Driver ID:</strong> " + id + "</p>" +
-	                "<p><strong>Name:</strong> " + name + "</p>" +
-	                "<p><strong>Contact Number:</strong> " + contactNumber + "</p>" +
-	                "<p><strong>Status:</strong> " + status + "</p>" +
-	                "<p><strong>NIC Number:</strong> " + nicNumber + "</p>" +
+	                "<p><strong>User ID:</strong> " + userId + "</p>" +
+	                "<p><strong>Name:</strong> " + username + "</p>" +
+	                "<p><strong>Email:</strong> " + useremail + "</p>" +
+	                "<p><strong>Account Status:</strong> " + accountStatus + "</p>" +
+	                "<p><strong>Account Type:</strong> " + accountType + "</p>" +
 	            "</div>",
 	        icon: "info",
 	        confirmButtonText: "OK",
