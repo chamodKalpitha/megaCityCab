@@ -72,6 +72,7 @@ public class AddUserServlet extends HttpServlet {
         }
                 
         try {
+        	
             UserDTO userDTO = new UserDTO(name, email, accountType);
             boolean isCreated = userController.createUser(userDTO);
             
