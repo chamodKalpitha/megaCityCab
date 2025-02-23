@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="D:/software/JAR Files/JAR Files/javax.servlet-3.1.jar"/>
 	<classpathentry kind="lib" path="D:/software/JAR Files/JAR Files/mysql-connector-java-5.1.48-bin.jar"/>
 	<classpathentry kind="lib" path="D:/software/JAR Files/JAR Files/servlet-api.jar"/>
+	<classpathentry kind="lib" path="D:/software/JAR Files/JAR Files/javax.mail-1.6.2.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
