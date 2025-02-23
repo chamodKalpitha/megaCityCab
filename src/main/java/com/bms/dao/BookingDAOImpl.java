@@ -22,21 +22,49 @@ public class BookingDAOImpl implements BookingDAO {
         this.connection = DatabaseConfig.getInstance().getConnection();
 	}
 
-    @Override
+	@Override
     public boolean createBooking(Booking booking) throws SQLException {
-        String sql = "INSERT INTO booking (customer_id, booked_vehicle_id, driver_id, booking_date, booking_status, pricing_type, is_delete) VALUES (?, ?, ?, ?, ?, ?, false)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, booking.getCustomerId());
-            stmt.setInt(2, booking.getBookedVehicleId());
-            if (booking.getDriverId() != null) {
-                stmt.setInt(3, booking.getDriverId());
+		
+        String bookingSql = "INSERT INTO booking (user_id, booked_vehicle_id, driver_id, booking_date, booking_status, pricing_type, is_delete) VALUES (?, ?, null , ?, ?, ?, false)";
+        String vehicleUpdateSql = "UPDATE vehicle SET vehicle_status = ? WHERE vehicle_id = ?";
+
+        PreparedStatement bookingStmt = null;
+        PreparedStatement vehicleUpdateStmt = null;
+
+        try {
+            connection.setAutoCommit(false);
+
+            // Insert booking
+            bookingStmt = connection.prepareStatement(bookingSql);
+            bookingStmt.setInt(1, booking.getUserId());
+            bookingStmt.setInt(2, booking.getBookedVehicleId());
+            bookingStmt.setDate(3, new java.sql.Date(booking.getBookingDate().getTime())); 
+            bookingStmt.setString(4, booking.getBookingStatus().name());
+            bookingStmt.setString(5, booking.getPricingType().name());
+
+            int bookingRowsAffected = bookingStmt.executeUpdate();
+
+            // Update vehicle status
+            vehicleUpdateStmt = connection.prepareStatement(vehicleUpdateSql);
+            vehicleUpdateStmt.setString(1, VehicleStatus.INUSE.name());
+            vehicleUpdateStmt.setInt(2, booking.getBookedVehicleId());
+
+            int vehicleRowsAffected = vehicleUpdateStmt.executeUpdate();
+
+            // Check if both operations were successful
+            if (bookingRowsAffected > 0 && vehicleRowsAffected > 0) {
+                connection.commit(); // Commit the transaction
+                return true;
             } else {
-                stmt.setNull(3, Types.INTEGER);
+                connection.rollback(); // Rollback if either operation failed
+                return false;
             }
-            stmt.setDate(4, new java.sql.Date(booking.getBookingDate().getTime())); // Convert java.util.Date to java.sql.Date
-            stmt.setString(5, booking.getBookingStatus().name());
-            stmt.setString(6, booking.getPricingType().name());
-            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+        	connection.rollback();
+        	throw e;
+        } finally {
+        	connection.setAutoCommit(true);
         }
     }
 
@@ -45,7 +73,7 @@ public class BookingDAOImpl implements BookingDAO {
         List<BookingDTO> bookings = new ArrayList<>();
         String sql = "SELECT b.*, v.*, c.* FROM booking b " +
         			 "JOIN vehicle v ON b.booked_vehicle_id = v.vehicle_id "+
-        			 "JOIN customer c ON b.customer_id = c.customer_id "+
+        			 "JOIN customer c ON b.user_id = c.user_id "+
         			 "WHERE b.is_delete = 0 "+
         			 "AND c.customer_name LIKE ? LIMIT ? OFFSET ?";
         
@@ -58,7 +86,7 @@ public class BookingDAOImpl implements BookingDAO {
             while (rs.next()) {
             	
             	CustomerDTO customer = new CustomerDTO(
-                        rs.getInt("customer_id"),
+                        rs.getInt("user_id"),
                         rs.getString("customer_name"),
                         rs.getString("address"),
                         rs.getString("nic_number"),
@@ -83,7 +111,7 @@ public class BookingDAOImpl implements BookingDAO {
             	
                 bookings.add(new BookingDTO(
                         rs.getInt("booking_id"),
-                        rs.getInt("customer_id"),
+                        rs.getInt("user_id"),
                         rs.getInt("booked_vehicle_id"),
                         rs.getObject("driver_id") != null ? rs.getInt("driver_id") : null,
                         rs.getDate("booking_date"), // Retrieves as java.sql.Date
@@ -117,7 +145,7 @@ public class BookingDAOImpl implements BookingDAO {
             if (rs.next()) {
                 return new BookingDTO(
                         rs.getInt("booking_id"),
-                        rs.getInt("customer_id"),
+                        rs.getInt("user_id"),
                         rs.getInt("booked_vehicle_id"),
                         rs.getObject("driver_id") != null ? rs.getInt("driver_id") : null,
                         rs.getDate("booking_date"),
@@ -135,11 +163,7 @@ public class BookingDAOImpl implements BookingDAO {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
         	stmt.setInt(1, booking.getBookedVehicleId());
             stmt.setString(2, booking.getBookingStatus().name());
-            if (booking.getDriverId() != null) {
-                stmt.setInt(3, booking.getDriverId());
-            } else {
-                stmt.setNull(3, Types.INTEGER);
-            }
+            stmt.setInt(3, booking.getDriverId());
             stmt.setString(4, booking.getPricingType().name());
             stmt.setDate(5, new java.sql.Date(booking.getBookingDate().getTime())); // Convert java.util.Date to java.sql.Date
             stmt.setInt(6, booking.getBookingId());
