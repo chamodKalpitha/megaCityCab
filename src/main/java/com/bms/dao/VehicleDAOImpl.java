@@ -202,4 +202,19 @@ public class VehicleDAOImpl implements VehicleDAO {
         }
         return 0;
     }
+
+	@Override
+	public boolean checkVehicleAvailable(int vehicleId) throws SQLException {
+		String sql = "SELECT vehicle_status FROM vehicle WHERE vehicle_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, vehicleId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+            	if(VehicleStatus.valueOf(rs.getString("vehicle_status")) == VehicleStatus.AVAILABLE) {
+            		return true;
+            	}
+            }
+        }
+        return false;
+	}
 }
