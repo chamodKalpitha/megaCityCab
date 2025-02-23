@@ -2,6 +2,7 @@ package com.bms.controller;
 
 import com.bms.dao.BookingDAO;
 import com.bms.dto.BookingDTO;
+import com.bms.enums.BookingStatus;
 import com.bms.enums.PricingType;
 import com.bms.model.Booking;
 
@@ -16,7 +17,14 @@ public class BookingController {
     }
 
     public boolean createBooking(BookingDTO BookingDTO) throws SQLException {
-    	Booking booking = new Booking(BookingDTO.getCustomerId(),BookingDTO.getBookedVehicleId(), BookingDTO.getBookingDate(), BookingDTO.getBookingStatus(), BookingDTO.getPricingType());
+    	  	
+    	Booking booking = new Booking();
+    	booking.setUserId(BookingDTO.getUserId());
+    	booking.setBookedVehicleId(BookingDTO.getBookedVehicleId());
+    	booking.setBookingDate(BookingDTO.getBookingDate());
+    	booking.setBookingStatus(BookingStatus.PENDING);
+    	booking.setPricingType(BookingDTO.getPricingType());
+    	
         return bookingDAO.createBooking(booking);
     }
 
@@ -38,7 +46,7 @@ public class BookingController {
     	if (BookingDTO.getPricingType() == PricingType.PER_DAY_WITH_DRIVER || BookingDTO.getPricingType() == PricingType.PER_KM_WITH_DRIVER) {
             booking = new Booking(BookingDTO.getBookingId(),BookingDTO.getBookedVehicleId(),BookingDTO.getDriverId(),BookingDTO.getBookingDate(),BookingDTO.getBookingStatus(),BookingDTO.getPricingType());
         } else {
-        	booking = new Booking(BookingDTO.getBookingId(),BookingDTO.getBookedVehicleId(),BookingDTO.getBookingDate(),BookingDTO.getBookingStatus(),BookingDTO.getPricingType());
+            booking = new Booking(BookingDTO.getBookingId(),BookingDTO.getBookedVehicleId(),null,BookingDTO.getBookingDate(),BookingDTO.getBookingStatus(),BookingDTO.getPricingType());
         }
     	
         return bookingDAO.updateBooking(booking);
