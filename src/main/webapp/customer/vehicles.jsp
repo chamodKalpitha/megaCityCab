@@ -75,7 +75,9 @@
 		                        <td>${vehicle.ratePerKM}</td>
 		                        <td>${vehicle.ratePerDay}</td>
 		                        <td class="align-middle text-center">
-									<button class="btn btn-dark" class="btn btn-sm btn-info">Book</button>
+		                        <c:if test="${not empty sessionScope.accountType and sessionScope.accountType eq 'CUSTOMER'}">
+		                        	<button class="btn btn-dark" class="btn btn-sm btn-info" onclick="bookAVehicle('${vehicle.vehicleId}')">Book</button></c:if>
+		                        <c:if test="${empty sessionScope.accountType}"><a href="login"><button class="btn btn-dark" class="btn btn-sm btn-info">Book</button></a></c:if>
 		                        </td>
 		                    </tr>
 		                </c:forEach>
@@ -121,12 +123,62 @@
         </div>
 	</div>
 	<jsp:include page="../components/footer.jsp"/>
+	<jsp:include page="../components/toaster.jsp" />
 	<c:if test="${message ne null}">
 	   <div class="alert alert-danger" role="alert">
 		${message}
 		</div>
 	</c:if>
 	<script>
+	
+	function bookAVehicle(vehicleId) {
+	    const date = new Date().toISOString().split('T')[0]; 
+	    console.log(date);
+	    Swal.fire({
+	        title: "Book a Ride ",
+	        html: `
+	            <form id="bookingForm" action="${pageContext.request.contextPath}/customer/create-booking" method="POST">
+	                <!-- Booking Date -->
+	                <div class="mb-3">
+	                    <label for="bookingDate" class="form-label text-start d-block">Booking Date</label>
+	                    <input type="date" class="form-control" id="bookingDate" name="bookingDate" placeholder="Select a date" min="`+date+`" required>
+	                </div>
+
+	                <!-- Pricing Type -->
+	                <div class="mb-5">
+	                    <label for="pricingType" class="form-label text-start d-block">Pricing Type</label>
+	                    <select class="form-select" id="pricingType" name="pricingType" required>
+	                        <option value="PER_KM_WITH_DRIVER">Per KM with Driver</option>
+	                        <option value="PER_KM_WITHOUT_DRIVER">Per KM without Driver</option>
+	                        <option value="PER_DAY_WITH_DRIVER">Per Day with Driver</option>
+	                        <option value="PER_DAY_WITHOUT_DRIVER">Per Day without Driver</option>
+	                    </select>
+	                </div>
+	                
+	                <input type="hidden" value="`+vehicleId+`" name="vehicleId">
+
+	                <div class="text-center">
+	                    <button type="submit" class="btn btn-dark w-100">Book</button>
+	                </div>
+	            </form>
+	        `,
+	        showCancelButton: false,
+	        showConfirmButton: false
+	    });
+	}
+
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const Message = urlParams.get('error');
+    if (Message) {
+        Swal.fire({
+            position: "top-end",
+            icon: "error",
+            title: Message,
+            showConfirmButton: false,
+            timer: 1500
+        });
+    }
 
 	function handleDelete(id){
 		const url = `${pageContext.request.contextPath}/dashboard/delete-vehicle?search=<%= searchQuery %>&entries=<%= entries %>&page=<%= currentPage %>&vehicleId=`+id;
