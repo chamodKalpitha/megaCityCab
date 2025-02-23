@@ -1,8 +1,14 @@
 package com.bms.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletResponse;
+
 import com.bms.enums.AccountType;
+import com.bms.enums.PricingType;
 import com.bms.enums.VehicleStatus;
 import com.bms.enums.VehicleType;
 
@@ -10,6 +16,9 @@ public class InputValidator {
 
 
     public static String isValidEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            return null; 
+        }
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         Pattern pattern = Pattern.compile(emailRegex);
         if(!pattern.matcher(email).matches()) {
@@ -37,6 +46,18 @@ public class InputValidator {
             return null;
         };
         return password;
+    }
+    
+    public static Date isValidDate(String date) {
+        if (date == null || date.isEmpty()) {
+            return null; 
+        }
+        try {
+            Date validDate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+            return validDate;
+        } catch (ParseException e) {
+        	return null;
+        }
     }
     
     public static String isValidPhoneNumber(String phoneNumber) {
@@ -92,6 +113,17 @@ public class InputValidator {
         }
         try {
             return VehicleType.valueOf(value.toUpperCase()); 
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+    
+    public static PricingType parsePricingType(String value) {
+        if (value == null || value.isEmpty()) {
+            return null; 
+        }
+        try {
+            return PricingType.valueOf(value.toUpperCase()); 
         } catch (IllegalArgumentException e) {
             return null;
         }
