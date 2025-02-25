@@ -5,8 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletResponse;
-
 import com.bms.enums.AccountType;
 import com.bms.enums.PricingType;
 import com.bms.enums.VehicleStatus;
