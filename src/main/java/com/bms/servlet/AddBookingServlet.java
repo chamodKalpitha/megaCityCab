@@ -2,7 +2,6 @@ package com.bms.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
@@ -21,6 +20,7 @@ import com.bms.dao.VehicleDAO;
 import com.bms.dao.VehicleDAOImpl;
 import com.bms.dto.BookingDTO;
 import com.bms.enums.PricingType;
+import com.bms.service.EmailService;
 import com.bms.utils.InputValidator;
 
 
@@ -29,13 +29,16 @@ public class AddBookingServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private BookingController bookingController;
 	private VehicleController vehicleController;
+    private EmailService emailService;
+
 
     public AddBookingServlet() {
         BookingDAO bookingDAO = new BookingDAOImpl();
         VehicleDAO vehicleDAO = new VehicleDAOImpl();
         this.bookingController = new BookingController(bookingDAO);
         this.vehicleController = new VehicleController(vehicleDAO);
-        // TODO Auto-generated constructor stub
+        emailService = new EmailService();
+        bookingController.registerObserver(emailService);
     }
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -77,7 +80,7 @@ public class AddBookingServlet extends HttpServlet {
         	
 			boolean isBooked = bookingController.createBooking(bookingDTO);
 			if(isBooked) {
-                response.sendRedirect("/megaCityCab/vehicles?search="+ searchQuery + "&entries="+entries+"&page="+currentPage+"&success=Vehicle booked successfully");
+                response.sendRedirect("/megaCityCab/bookings?success=Vehicle booked successfully");
                 return;
 			}
 			
