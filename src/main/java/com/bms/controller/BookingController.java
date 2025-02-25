@@ -5,15 +5,33 @@ import com.bms.dto.BookingDTO;
 import com.bms.enums.BookingStatus;
 import com.bms.enums.PricingType;
 import com.bms.model.Booking;
+import com.bms.observer.BookingObserver;
+import com.bms.observer.BookingSubject;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class BookingController {
+public class BookingController implements BookingSubject {
     private final BookingDAO bookingDAO;
+    private final List<BookingObserver> observers = new ArrayList<>();
+
 
     public BookingController(BookingDAO bookingDAO) {
         this.bookingDAO = bookingDAO;
+    }
+    
+
+	@Override
+	public void registerObserver(BookingObserver observer) {
+		 observers.add(observer);
+	}
+	
+    private void notifyObservers(BookingDTO bookingDTO) {
+
+        for (BookingObserver observer : observers) {
+            observer.onBookingCreated(bookingDTO);
+        }
     }
 
     public boolean createBooking(BookingDTO BookingDTO) throws SQLException {
@@ -25,7 +43,16 @@ public class BookingController {
     	booking.setBookingStatus(BookingStatus.PENDING);
     	booking.setPricingType(BookingDTO.getPricingType());
     	
-        return bookingDAO.createBooking(booking);
+    	BookingDTO bookingIdDto = bookingDAO.createBooking(booking);
+    	int bookingId = bookingIdDto.getBookingId();
+        if(bookingId > 0) {
+            BookingDTO createdBooking = bookingDAO.getBookingById(16);
+
+            notifyObservers(createdBooking);
+            return true;
+        }
+        
+        return false;
     }
 
     public List<BookingDTO> getBookings(String search, int limit, int offset) throws SQLException {
@@ -55,4 +82,6 @@ public class BookingController {
     public boolean deleteBooking(int bookingId) throws SQLException {
         return bookingDAO.deleteBooking(bookingId);
     }
+
+	
 }
