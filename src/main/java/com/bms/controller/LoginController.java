@@ -3,7 +3,6 @@ import java.sql.SQLException;
 import com.bms.dao.LoginDAO;
 import com.bms.dto.LoginDTO;
 import com.bms.model.User;
-import com.bms.utils.InputValidator;
 
 public class LoginController {
 	

@@ -12,13 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.bms.controller.BookingController;
-import com.bms.controller.DriverController;
 import com.bms.dao.BookingDAO;
 import com.bms.dao.BookingDAOImpl;
-import com.bms.dao.DriverDAO;
-import com.bms.dao.DriverDAOImpl;
 import com.bms.dto.BookingDTO;
-import com.bms.dto.DriverDTO;
 import com.bms.enums.AccountType;
 import com.bms.utils.AuthUtils;
 

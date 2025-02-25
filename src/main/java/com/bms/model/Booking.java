@@ -7,7 +7,7 @@ import com.bms.enums.PricingType;
 
 public class Booking {
 	private int bookingId;
-	private int customerId;
+	private int userId;
 	private int bookedVehicleId;
 	private Integer driverId;
 	private Date bookingDate;
@@ -15,6 +15,10 @@ public class Booking {
 	private PricingType pricingType;
 	private boolean is_delete;
 	
+	
+	public Booking() {
+	}
+
 	public Booking(int bookingId, int bookedVehicleId, Integer driverId, Date bookingDate, BookingStatus bookingStatus,
 			PricingType pricingType) {
 		super();
@@ -25,29 +29,7 @@ public class Booking {
 		this.bookingStatus = bookingStatus;
 		this.pricingType = pricingType;
 	}
-	
-	public Booking(int bookingId, int bookedVehicleId, Date bookingDate, BookingStatus bookingStatus,
-			PricingType pricingType) {
-		super();
-		this.bookingId = bookingId;
-		this.bookedVehicleId = bookedVehicleId;
-		this.bookingDate = bookingDate;
-		this.bookingStatus = bookingStatus;
-		this.pricingType = pricingType;
-	}
 
-	public Booking(int customerId, int bookedVehicleId, Integer driverId, Date bookingDate,
-			BookingStatus bookingStatus, PricingType pricingType, boolean is_delete) {
-		super();
-		this.customerId = customerId;
-		this.bookedVehicleId = bookedVehicleId;
-		this.driverId = driverId;
-		this.bookingDate = bookingDate;
-		this.bookingStatus = bookingStatus;
-		this.pricingType = pricingType;
-		this.is_delete = is_delete;
-	}
-	
 
 	public int getBookingId() {
 		return bookingId;
@@ -57,14 +39,15 @@ public class Booking {
 		this.bookingId = bookingId;
 	}
 
-	public int getCustomerId() {
-		return customerId;
+
+	public int getUserId() {
+		return userId;
 	}
 
-	public void setCustomerId(int customerId) {
-		this.customerId = customerId;
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
-	
+
 	public int getBookedVehicleId() {
 		return bookedVehicleId;
 	}

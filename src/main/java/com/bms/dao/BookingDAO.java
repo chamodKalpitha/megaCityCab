@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface BookingDAO {
-    boolean createBooking(Booking booking) throws SQLException;
+	BookingDTO createBooking(Booking booking) throws SQLException;
 
     List<BookingDTO> getBookings(String search, int limit, int offset) throws SQLException;
 

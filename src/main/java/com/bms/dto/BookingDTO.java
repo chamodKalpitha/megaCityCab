@@ -2,14 +2,12 @@ package com.bms.dto;
 
 import com.bms.enums.BookingStatus;
 import com.bms.enums.PricingType;
-import com.bms.model.Customer;
-import com.bms.model.Vehicle;
 
 import java.util.Date;
 
 public class BookingDTO {
     private int bookingId;
-    private int customerId;
+    private int userId;
     private int bookedVehicleId;
     private Integer driverId;
     private Date bookingDate;
@@ -17,9 +15,23 @@ public class BookingDTO {
     private PricingType pricingType;
     private VehicleDTO vehicleDTO;
     private CustomerDTO customerDTO;
+    private UserDTO userDTO;
 
     public BookingDTO() {};
     
+   	public BookingDTO(int bookingId) {
+		super();
+		this.bookingId = bookingId;
+	}
+
+	public BookingDTO(int userId, int bookedVehicleId, Date bookingDate, PricingType pricingType) {
+		super();
+		this.userId = userId;
+		this.bookedVehicleId = bookedVehicleId;
+		this.bookingDate = bookingDate;
+		this.pricingType = pricingType;
+	}
+
 	public BookingDTO(int bookingId, int bookedVehicleId, Integer driverId, Date bookingDate,
 			BookingStatus bookingStatus, PricingType pricingType) {
 		super();
@@ -41,10 +53,10 @@ public class BookingDTO {
 		this.pricingType = pricingType;
 	}
 
-	public BookingDTO(int bookingId, int customerId, int bookedVehicleId, Integer driverId, Date bookingDate, 
+	public BookingDTO(int bookingId, int userId, int bookedVehicleId, Integer driverId, Date bookingDate, 
                       BookingStatus bookingStatus, PricingType pricingType) {
         this.bookingId = bookingId;
-        this.customerId = customerId;
+        this.userId = userId;
         this.bookedVehicleId = bookedVehicleId;
         this.driverId = driverId;
         this.bookingDate = bookingDate;
@@ -52,11 +64,11 @@ public class BookingDTO {
         this.pricingType = pricingType;
     }
     
-    public BookingDTO(int bookingId, int customerId, int bookedVehicleId, Integer driverId, Date bookingDate,
+    public BookingDTO(int bookingId, int userId, int bookedVehicleId, Integer driverId, Date bookingDate,
 			BookingStatus bookingStatus, PricingType pricingType, VehicleDTO vehicleDTO, CustomerDTO customerDTO) {
 		super();
 		this.bookingId = bookingId;
-		this.customerId = customerId;
+		this.userId = userId;
 		this.bookedVehicleId = bookedVehicleId;
 		this.driverId = driverId;
 		this.bookingDate = bookingDate;
@@ -64,6 +76,24 @@ public class BookingDTO {
 		this.pricingType = pricingType;
 		this.vehicleDTO = vehicleDTO;
 		this.customerDTO = customerDTO;
+	}
+    
+    
+
+	public BookingDTO(int bookingId, int userId, int bookedVehicleId, Integer driverId, Date bookingDate,
+			BookingStatus bookingStatus, PricingType pricingType, VehicleDTO vehicleDTO, CustomerDTO customerDTO,
+			UserDTO userDTO) {
+		super();
+		this.bookingId = bookingId;
+		this.userId = userId;
+		this.bookedVehicleId = bookedVehicleId;
+		this.driverId = driverId;
+		this.bookingDate = bookingDate;
+		this.bookingStatus = bookingStatus;
+		this.pricingType = pricingType;
+		this.vehicleDTO = vehicleDTO;
+		this.customerDTO = customerDTO;
+		this.userDTO = userDTO;
 	}
 
 	public int getBookingId() {
@@ -74,12 +104,12 @@ public class BookingDTO {
         this.bookingId = bookingId;
     }
 
-    public int getCustomerId() {
-        return customerId;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+    public void setUserId(int customerId) {
+        this.userId = customerId;
     }
 
     public int getBookedVehicleId() {
@@ -136,6 +166,14 @@ public class BookingDTO {
 
 	public void setCustomerDTO(CustomerDTO customerDTO) {
 		this.customerDTO = customerDTO;
+	}
+
+	public UserDTO getUserDTO() {
+		return userDTO;
+	}
+
+	public void setUserDTO(UserDTO userDTO) {
+		this.userDTO = userDTO;
 	}
     
 }

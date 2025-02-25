@@ -51,5 +51,9 @@ public class VehicleController {
     
     public List<VehicleDTO> getVehiclesNumberPlate() throws SQLException {
         return vehicleDAO.getVehiclesNumberPlate();
-    } 
+    }
+    
+    public boolean checkVehicleAvailable(int vehicleId) throws SQLException {
+        return vehicleDAO.checkVehicleAvailable(vehicleId);
+    }
 }

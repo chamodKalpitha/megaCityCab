@@ -88,13 +88,12 @@ public class LoginServlet extends HttpServlet {
             
             if(responseLoginDTO.getAccountType() == AccountType.ADMIN) {
             	session.setAttribute("accountType", responseLoginDTO.getAccountType());
-            	session.setAttribute("email", responseLoginDTO.getEmail());
                 response.sendRedirect(request.getContextPath()+"/dashboard/users"); 
             }
             
             if(responseLoginDTO.getAccountType() == AccountType.CUSTOMER) {
+            	session.setAttribute("customerId", responseLoginDTO.getUserId());
             	session.setAttribute("accountType", responseLoginDTO.getAccountType());
-            	session.setAttribute("email", responseLoginDTO.getEmail());
                 response.sendRedirect(request.getContextPath()+"/vehicles"); 
             }
             

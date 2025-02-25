@@ -4,6 +4,7 @@ import com.bms.enums.AccountStatus;
 import com.bms.enums.AccountType;
 
 public class LoginDTO {
+	private int userId;
 	private String email;
 	private String password;
 	private AccountType accountType;
@@ -32,6 +33,12 @@ public class LoginDTO {
 	}
 	public void setAccountStatus(AccountStatus accountStatus) {
 		this.accountStatus = accountStatus;
+	}
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 	
 }
