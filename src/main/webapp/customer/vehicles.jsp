@@ -133,7 +133,6 @@
 	
 	function bookAVehicle(vehicleId) {
 	    const date = new Date().toISOString().split('T')[0]; 
-	    console.log(date);
 	    Swal.fire({
 	        title: "Book a Ride ",
 	        html: `
@@ -174,6 +173,18 @@
         Swal.fire({
             position: "top-end",
             icon: "error",
+            title: Message,
+            showConfirmButton: false,
+            timer: 1500
+        });
+    }
+    
+    const urlParams2 = new URLSearchParams(window.location.search);
+    const successMessage = urlParams2.get('success');
+    if (successMessage) {
+        Swal.fire({
+            position: "top-end",
+            icon: "success",
             title: Message,
             showConfirmButton: false,
             timer: 1500
