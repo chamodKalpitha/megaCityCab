@@ -11,29 +11,27 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.bms.controller.UserController;
-import com.bms.dao.UserDAO;
-import com.bms.dao.UserDAOImpl;
+import com.bms.controller.StaffController;
+import com.bms.dao.StaffDAO;
+import com.bms.dao.StaffDAOImpl;
+import com.bms.dto.StaffDTO;
 import com.bms.dto.UserDTO;
 import com.bms.enums.AccountType;
 import com.bms.utils.AuthUtils;
 import com.bms.utils.InputValidator;
 
-/**
- * Servlet implementation class AddUserServlet
- */
-@WebServlet("/dashboard/add-user")
-public class AddUserServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private UserController userController;
 
-    public AddUserServlet() {
-        UserDAO userDAO = new UserDAOImpl();
-        this.userController = new UserController(userDAO);
+@WebServlet("/dashboard/add-staff")
+public class AddStaffServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private StaffController staffController;
+
+    public AddStaffServlet() {
+        StaffDAO staffDAO = new StaffDAOImpl();
+        this.staffController = new StaffController(staffDAO);
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
 		if (!AuthUtils.isAuthenticated(request, response)) {
             return;
         }
@@ -44,7 +42,7 @@ public class AddUserServlet extends HttpServlet {
             return;
         }
         
-        response.sendRedirect(request.getContextPath() + "/dashboard/new-users.jsp");
+        response.sendRedirect(request.getContextPath() + "/dashboard/new-staff.jsp");
         
 	}
 
@@ -62,40 +60,43 @@ public class AddUserServlet extends HttpServlet {
         }
         
         String name = request.getParameter("name");
-        String email = request.getParameter("email");
+        String email = InputValidator.isValidEmail(request.getParameter("email"));
+        String address = request.getParameter("address");
+        String contactNumber = InputValidator.isValidPhoneNumber(request.getParameter("contactNumber"));
         AccountType accountType = InputValidator.parseAccountType(request.getParameter("accountType"));
         
-        if(Objects.isNull(name) || name.isBlank() || Objects.isNull(email) || email.isBlank() || Objects.isNull(accountType)) {
+        if(Objects.isNull(name) || name.isBlank() || Objects.isNull(email) || Objects.isNull(address) || address.isBlank() || Objects.isNull(contactNumber) || Objects.isNull(accountType)) {
 	        request.setAttribute("error", "All fields are required.");
-	        request.getRequestDispatcher("/dashboard/new-users.jsp").forward(request, response);
+	        request.getRequestDispatcher("/dashboard/new-staff.jsp").forward(request, response);
 	        return;
         }
                 
         try {
         	
-            UserDTO userDTO = new UserDTO(name, email, accountType);
-            boolean isCreated = userController.createUser(userDTO);
+        	if(staffController.isEmailDuplicate(email)) {
+                request.setAttribute("error", "Duplicate email please enter different email");
+                request.getRequestDispatcher("/dashboard/new-staff.jsp").forward(request, response);
+                return;
+        	}
+        	
+        	if(staffController.isContactNumberDuplicate(contactNumber)) {
+                request.setAttribute("error", "Duplicate contact number please enter different contact");
+                request.getRequestDispatcher("/dashboard/new-staff.jsp").forward(request, response);
+                return;
+        	}
+        	
+        	UserDTO userDTO = new UserDTO(email, accountType);
+            StaffDTO staffDTO = new StaffDTO(name, address, contactNumber,userDTO);
             
+            boolean isCreated = staffController.createStaff(staffDTO);
             if (isCreated) {
-                response.sendRedirect(request.getContextPath() + "/dashboard/users"); 
+                response.sendRedirect(request.getContextPath() + "/dashboard/staffs"); 
             } 
             
         } catch (SQLException e) {
         	
-            if(e.getErrorCode()==1062) {
-                request.setAttribute("error", "Duplicate email please enter different email");
-                request.getRequestDispatcher("/dashboard/new-users.jsp").forward(request, response);
-                return;
-            }
-            
         	e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
-            
-        } catch(IllegalArgumentException e) {
-        	
-        	System.out.println(e);
-            request.setAttribute("error", "An error occurred while creating the user.");
-            request.getRequestDispatcher("/dashboard/new-users.jsp").forward(request, response);
             
         }
 		

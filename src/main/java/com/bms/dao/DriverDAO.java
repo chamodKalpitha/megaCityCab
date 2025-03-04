@@ -14,5 +14,5 @@ public interface DriverDAO {
     DriverDTO getDriverById(int driverId) throws SQLException;
     boolean updateDriver(Driver driver) throws SQLException;
     List<DriverDTO> getDriversId() throws SQLException;
-
+    boolean checkDuplicateDriver(String NICNumber, String contactNumber)throws SQLException;
 }

@@ -5,7 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+import com.bms.enums.AccountStatus;
 import com.bms.enums.AccountType;
+import com.bms.enums.BookingStatus;
+import com.bms.enums.DriverStatus;
 import com.bms.enums.PricingType;
 import com.bms.enums.VehicleStatus;
 import com.bms.enums.VehicleType;
@@ -94,6 +97,28 @@ public class InputValidator {
         }
     }
     
+    public static AccountStatus parseAccountStatus(String value) {
+        if (value == null || value.isEmpty()) {
+            return null; 
+        }
+        try {
+            return AccountStatus.valueOf(value.toUpperCase()); 
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+    
+    public static DriverStatus parseDriverStatus(String value) {
+        if (value == null || value.isEmpty()) {
+            return null; 
+        }
+        try {
+            return DriverStatus.valueOf(value.toUpperCase()); 
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+    
     public static VehicleStatus parseVehicleStatus(String value) {
         if (value == null || value.isEmpty()) {
             return null; 
@@ -122,6 +147,17 @@ public class InputValidator {
         }
         try {
             return PricingType.valueOf(value.toUpperCase()); 
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+    
+    public static BookingStatus parseBookingStatus(String value) {
+        if (value == null || value.isEmpty()) {
+            return null; 
+        }
+        try {
+            return BookingStatus.valueOf(value.toUpperCase()); 
         } catch (IllegalArgumentException e) {
             return null;
         }

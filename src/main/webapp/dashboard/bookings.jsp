@@ -91,17 +91,18 @@
 								    ${booking.pricingType}
 								</td>
 		                        <td class="d-flex justify-content-center gap-2 h-full">
+		                        	<button class="btn btn-sm btn-danger" data-user-id="${booking.bookingId}" onclick="handleDelete(${booking.bookingId})"><i class="bi bi-receipt"></i></button>
 			                        <a href="${pageContext.request.contextPath}/dashboard/update-booking?bookingId=${booking.bookingId}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
 			                        <button class="btn btn-sm btn-info" class="btn btn-sm btn-info" 
-			                        onclick="showBookingDetails(${booking.bookingId}, ${booking.customerId}, ${booking.bookedVehicleId}, '${booking.bookingDate}', '${booking.bookingStatus}', '${driverIdValue}', ' ${booking.pricingType}')"><i class="bi bi-eye"></i></button>
-			                        <button class="btn btn-sm btn-danger" data-user-id="${booking.bookingId}" onclick="handleDelete(${booking.bookingId})"><i class="bi bi-trash"></i></button>
+			                        onclick="showBookingDetails(${booking.bookingId}, ${booking.customerDTO.customerId}, ${booking.bookedVehicleId}, '${booking.bookingDate}', '${booking.bookingStatus}', '${driverIdValue}', ' ${booking.pricingType}')"><i class="bi bi-eye"></i></button>
+			                        <button class="btn btn-sm btn-danger" data-user-id="${booking.bookingId}" onclick="handleDelete(${booking.bookingId})"><i class="bi bi-x-octagon"></i></button>
 		                        </td>
 		                    </tr>
 		                </c:forEach>
 		            </c:when>
 		            <c:otherwise>
 		                <tr>
-		                    <td colspan="7" class="text-center">No users found</td>
+		                    <td colspan="7" class="text-center">No data found</td>
 		                </tr>
 		            </c:otherwise>
 		        </c:choose>

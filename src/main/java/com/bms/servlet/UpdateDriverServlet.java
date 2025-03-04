@@ -90,7 +90,6 @@ public class UpdateDriverServlet extends HttpServlet {
 	        return;
 	    }
 
-	    // Use InputValidator to parse the driverId safely
 	    Integer driverId = InputValidator.parseInteger(request.getParameter("driverId"));
 	    if (driverId == null || driverId <= 0) {
 	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Driver ID");
@@ -99,56 +98,49 @@ public class UpdateDriverServlet extends HttpServlet {
 
 	    String driverName = request.getParameter("driverName");
 	    String nicNumber = request.getParameter("nicNumber");
-	    String contactNumber = request.getParameter("contactNumber");
-	    String driverStatusParam = request.getParameter("driverStatus");
+	    String contactNumber = InputValidator.isValidPhoneNumber(request.getParameter("contactNumber"));
+	    DriverStatus driverStatus = InputValidator.parseDriverStatus(request.getParameter("driverStatus"));
 
-	    // Validate required fields
-	    if (driverName == null || nicNumber == null || contactNumber == null || driverStatusParam == null ||
-	        driverName.isBlank() || nicNumber.isBlank() || contactNumber.isBlank() || driverStatusParam.isBlank()) {
-	        request.setAttribute("error", "All fields are required.");
-	        request.getRequestDispatcher("/dashboard/update-driver.jsp?driverId=" + driverId).forward(request, response);
+	    if (driverName == null || nicNumber == null || contactNumber == null || driverStatus == null ||
+	        driverName.isBlank() || nicNumber.isBlank() || contactNumber.isBlank()) {
+	    	System.out.println(driverName);
+	    	System.out.println(nicNumber);
+	    	System.out.println(contactNumber);
+	    	System.out.println(driverStatus);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "All fields are required.");
 	        return;
 	    }
 
-	    // Validate and parse driver status
-	    DriverStatus driverStatus;
-	    try {
-	        driverStatus = DriverStatus.valueOf(driverStatusParam.trim().toUpperCase());
-	    } catch (IllegalArgumentException e) {
-	        request.setAttribute("error", "Invalid driver status.");
-	        request.getRequestDispatcher("/dashboard/update-driver.jsp?driverId=" + driverId).forward(request, response);
-	        return;
-	    }
 
-	    // Create driver DTO with validated inputs
 	    DriverDTO driverDTO = new DriverDTO(driverId, driverName.trim(), nicNumber.trim(), contactNumber.trim(), driverStatus);
 
 	    try {
 	        DriverDTO existingDriver = driverController.getDriverById(driverId);
+	        
 	        if (existingDriver == null) {
 	            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Driver not found");
 	            return;
+	        }
+	        
+	        Boolean isDuplicateContactDetails = driverController.checkDuplicateDriver(nicNumber, contactNumber);
+	        
+	        if(isDuplicateContactDetails) {
+	            request.setAttribute("driver", driverDTO);
+                request.setAttribute("error", "Duplicate NIC Number or contact Number");
+                request.getRequestDispatcher("/dashboard/update-driver.jsp?driverId=" + driverId).forward(request, response);
+                return;
 	        }
 
 	        boolean isUpdated = driverController.updateDriver(driverDTO);
 	        if (isUpdated) {
 	            response.sendRedirect(request.getContextPath() + "/dashboard/drivers");
-	        } else {
-	            request.setAttribute("driver", driverDTO);
-	            request.setAttribute("error", "Driver update failed!");
-	            request.getRequestDispatcher("/dashboard/update-driver.jsp?driverId=" + driverId).forward(request, response);
-	        }
+	        } 
+
 	    } catch (SQLException e) {
 	    	
-	        request.setAttribute("driver", driverDTO);
-	        
-            if (e.getErrorCode() == 1062) {
-    	        request.setAttribute("error", e.getMessage());
-    	        request.getRequestDispatcher("/dashboard/update-driver.jsp?driverId=" + driverId).forward(request, response);
-                return;
-            }
-	        request.setAttribute("error", "An error occurred while updating the driver.");
-	        request.getRequestDispatcher("/dashboard/update-driver.jsp?driverId=" + driverId).forward(request, response);
+        	e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            
 	    }
 	}
 

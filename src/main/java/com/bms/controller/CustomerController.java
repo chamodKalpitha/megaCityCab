@@ -21,7 +21,7 @@ public class CustomerController {
     }
 
     public boolean createCustomer(UserDTO userDto, CustomerDTO customerDto) throws SQLException, IllegalArgumentException {
-    	User user = new User(customerDto.getCustomerName(),userDto.getUserEmail(),AccountStatus.ACTIVE,AccountType.CUSTOMER,userDto.getPassword(),false);
+    	User user = new User(userDto.getUserEmail(),AccountStatus.ACTIVE,AccountType.CUSTOMER,userDto.getPassword(),false);
         Customer customer = new Customer(customerDto.getCustomerName(),customerDto.getAddress(),customerDto.getNicNumber(),customerDto.getContactNumber());
         return customerDAO.createCustomer(user, customer);
     }

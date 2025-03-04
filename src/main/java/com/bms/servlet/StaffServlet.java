@@ -1,7 +1,7 @@
 package com.bms.servlet;
-
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -10,26 +10,24 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.bms.controller.UserController;
-import com.bms.dao.UserDAO;
-import com.bms.dao.UserDAOImpl;
+import com.bms.controller.StaffController;
+import com.bms.dao.StaffDAO;
+import com.bms.dao.StaffDAOImpl;
+import com.bms.dto.StaffDTO;
 import com.bms.enums.AccountType;
 import com.bms.utils.AuthUtils;
 
-/**
- * Servlet implementation class DeleteUser
- */
-@WebServlet("/dashboard/delete-user")
-public class DeleteUserServlet extends HttpServlet {
-
+@WebServlet("/dashboard/staffs")
+public class StaffServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private UserController userController;
+	private StaffController staffController;
 	
-    public DeleteUserServlet() {
-        UserDAO userDAO = new UserDAOImpl();
-        this.userController = new UserController(userDAO);
+	@Override
+    public void init() {
+        StaffDAO staffDAO = new StaffDAOImpl();
+        this.staffController = new StaffController(staffDAO);
     }
-    
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		if (!AuthUtils.isAuthenticated(request, response)) {
@@ -46,23 +44,32 @@ public class DeleteUserServlet extends HttpServlet {
         	
             String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
             int entries = request.getParameter("entries") != null ? Integer.parseInt(request.getParameter("entries")) : 10;
-            int userId = request.getParameter("userId") != null ? Integer.parseInt(request.getParameter("userId")) : 0;
+            int currentPage = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+            int offset = (currentPage - 1) * entries;
             
-			boolean isDeleted = userController.deleteUser(userId);
-			if(isDeleted) {
-				response.sendRedirect(request.getContextPath()+"/dashboard/users?search="+searchQuery+"&entries="+entries); 
-			}
+			List<StaffDTO> staffs = staffController.getStaffs(searchQuery, entries, offset);
 			
+			request.setAttribute("staffs", staffs);
+	        request.setAttribute("page", currentPage);
+	        request.setAttribute("count", staffController.getStaffCount(searchQuery));
+	        request.setAttribute("entries", entries);
+	        request.setAttribute("search", searchQuery);
+	        
+	        request.getRequestDispatcher("/dashboard/staff.jsp").forward(request, response);
+	        
 		} catch (SQLException e) {
 			
 			e.printStackTrace();
 	        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
-						
+	        
 		} catch(NumberFormatException e) {
 			
 			e.printStackTrace();
 	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Request");
 	        
 		}
+
 	}
+
+
 }

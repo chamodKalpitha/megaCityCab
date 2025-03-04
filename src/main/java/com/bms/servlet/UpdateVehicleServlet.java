@@ -103,22 +103,33 @@ public class UpdateVehicleServlet extends HttpServlet {
         VehicleDTO vehicleDTO = new VehicleDTO(vehicleId, vehicleBrand, vehicleModel, plateNumber, capacity, vehicleStatus, vehicleType,vahicleImage, ratePerKM,ratePerDay);
 
         try {
+
+            VehicleDTO existingVehicleDTO = vehicleController.getVehicleById(vehicleId);
+            if (Objects.isNull(existingVehicleDTO)) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Vehicle not found");
+                return;
+            }
+        	
+        	Boolean isDuplicatePlateNumber = vehicleController.checkDuplicateVehicleNumberPlate(plateNumber);
+        	        	
+        	if(isDuplicatePlateNumber) {
+                request.setAttribute("vehicle", existingVehicleDTO);
+                request.setAttribute("error", "Duplicate vehicle number plate");
+                request.getRequestDispatcher("/dashboard/update-vehicle.jsp?vehicleId="+vehicleId).forward(request, response);
+                return;
+        	}
+        	
             boolean isUpdated = vehicleController.updateVehicle(vehicleDTO);
             if (isUpdated) {
                 response.sendRedirect(request.getContextPath() + "/dashboard/vehicles");
-            } else {
-                request.setAttribute("error", "Vehicle update failed!");
-                request.getRequestDispatcher("/dashboard/update-vehicle.jsp?vehicleId=" + vehicleId).forward(request, response);
-            }
+            } 
+            
         } catch (SQLException e) {
-        	System.out.println(e);
-            request.setAttribute("error", "An error occurred while updating the vehicle.");
-            request.getRequestDispatcher("/dashboard/update-vehicle.jsp?vehicleId=" + vehicleId).forward(request, response);
-        } catch (IllegalArgumentException e) {
-        	System.out.println(e);
-            request.setAttribute("error", "Invalid input provided.");
-            request.getRequestDispatcher("/dashboard/update-vehicle.jsp?vehicleId=" + vehicleId).forward(request, response);
-        }
+        	
+        	e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            
+        } 
     }
 
 }

@@ -1,6 +1,7 @@
 package com.bms.dao;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import com.bms.dto.VehicleDTO;
@@ -16,6 +17,6 @@ public interface VehicleDAO {
     public VehicleDTO getVehicleById(int vehicleId) throws SQLException;
     public boolean updateVehicle(Vehicle vehicle) throws SQLException;
     public List<VehicleDTO> getVehiclesNumberPlate() throws SQLException;
-    public boolean checkVehicleAvailable(int vehicleId) throws SQLException;
-
+    public boolean checkVehicleAvailable(int vehicleId, Date bookingDate) throws SQLException;
+    public boolean checkDuplicateVehicleNumberPlate(String numberPlate) throws SQLException;
 }

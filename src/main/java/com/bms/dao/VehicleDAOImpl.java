@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.bms.config.DatabaseConfig;
@@ -203,18 +204,45 @@ public class VehicleDAOImpl implements VehicleDAO {
         return 0;
     }
 
+ 
+
 	@Override
-	public boolean checkVehicleAvailable(int vehicleId) throws SQLException {
-		String sql = "SELECT vehicle_status FROM vehicle WHERE vehicle_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, vehicleId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-            	if(VehicleStatus.valueOf(rs.getString("vehicle_status")) == VehicleStatus.AVAILABLE) {
-            		return true;
-            	}
-            }
-        }
-        return false;
+	public boolean checkDuplicateVehicleNumberPlate(String numberPlate) throws SQLException {
+	    String sql = "SELECT vehicle_status FROM vehicle WHERE plate_number = ?";
+	    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+	        ps.setString(1, numberPlate);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                return true;
+	            }
+	        }
+	    }
+	    return false;
+	}
+
+	@Override
+	public boolean checkVehicleAvailable(int vehicleId, Date bookingDate) throws SQLException {
+	    String sql = "SELECT v.vehicle_id " +
+                "FROM vehicle v " +
+                "LEFT JOIN booking b ON v.vehicle_id = b.booked_vehicle_id " +
+                "AND b.booking_date = ? " +
+                "AND b.booking_status IN ('PENDING', 'COMPLETED') " +
+                "AND b.is_delete = 0 " +
+                "WHERE v.vehicle_id = ? " +
+                "AND v.vehicle_status = 'AVAILABLE' " +
+                "AND v.is_delete = 0 " +
+                "AND (b.booked_vehicle_id IS NULL OR b.booking_id IS NULL)";
+
+	   try (PreparedStatement ps = connection.prepareStatement(sql)) {
+	       ps.setDate(1, new java.sql.Date(bookingDate.getTime())); 
+	       ps.setInt(2, vehicleId);
+	
+	       try (ResultSet rs = ps.executeQuery()) {
+	           if (rs.next()) {
+	               return true;
+	           }
+	       }
+	   }
+	   return false;
 	}
 }

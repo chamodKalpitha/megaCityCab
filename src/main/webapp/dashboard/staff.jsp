@@ -38,9 +38,9 @@
 	<jsp:include page="../components/menu-bar.jsp" />
 	<div class="container mt-4">
 	<div class="d-flex justify-content-between align-items-center mb-3">
-		<h2 class="mb-0">User Details</h2>
-	    <a href="${pageContext.request.contextPath}/dashboard/add-user">
-	        <button class="btn btn-dark"><i class="bi bi-plus-lg"></i> Add User</button>
+		<h2 class="mb-0">Staff Details</h2>
+	    <a href="${pageContext.request.contextPath}/dashboard/add-staff">
+	        <button class="btn btn-dark"><i class="bi bi-plus-lg"></i> Add Staff</button>
 	    </a> 
 	</div>
 		<div class="d-flex justify-content-end mb-3">
@@ -58,30 +58,32 @@
 	                    <th>No</th>
 	                    <th>Name</th>
 	                    <th>Email</th>
-	                    <th>Account Status</th>
+	                    <th>Account Type</th>
+	                    <th>Contact</th>
 	                    <th>Action</th>
 	                </tr>
 	            </thead>
 	            <tbody>
 	            <c:choose>
-		            <c:when test="${not empty users}">
-		                <c:forEach var="user" items="${users}" varStatus="status">
+		            <c:when test="${not empty staffs}">
+		                <c:forEach var="staff" items="${staffs}" varStatus="status">
 		                    <tr>
 								<td>${(page - 1) * entries + status.index + 1}</td>
-		                        <td>${user.userName}</td>
-		                        <td>${user.userEmail}</td>
-		                        <td>${user.accountStatus}</td>
+		                        <td>${staff.name}</td>
+		                        <td>${staff.userDTO.userEmail}</td>
+		                        <td>${staff.userDTO.accountType}</td>
+		                        <td>${staff.contactNumber}</td>
 		                        <td class="d-flex justify-content-center gap-2">
-			                        <a href="${pageContext.request.contextPath}/dashboard/update-user?userId=${user.userId}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
-			                        <button class="btn btn-sm btn-info" class="btn btn-sm btn-info" onclick="showUserDetails(${user.userId}, '${user.userName}', '${user.userEmail}', '${user.accountStatus}', '${user.accountType}')"><i class="bi bi-eye"></i></button>
-			                        <button class="btn btn-sm btn-danger" data-user-id="${user.userId}" onclick="handleDelete(${user.userId})"><i class="bi bi-trash"></i></button>
+			                        <a href="${pageContext.request.contextPath}/dashboard/update-staff?staffId=${staff.staffId}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
+			                        <button class="btn btn-sm btn-info" class="btn btn-sm btn-info" onclick="showUserDetails(${staff.staffId}, '${staff.name}', '${staff.userDTO.userEmail}', '${staff.userDTO.accountStatus}', '${staff.userDTO.accountType}', '${staff.address}')"><i class="bi bi-eye"></i></button>
+			                        <button class="btn btn-sm btn-danger" data-user-id="${user.userId}" onclick="handleDelete(${staff.staffId})"><i class="bi bi-trash"></i></button>
 		                        </td>
 		                    </tr>
 		                </c:forEach>
 		            </c:when>
 		            <c:otherwise>
 		                <tr>
-		                    <td colspan="7" class="text-center">No users found</td>
+		                    <td colspan="7" class="text-center">No data found</td>
 		                </tr>
 		            </c:otherwise>
 		        </c:choose>
@@ -128,7 +130,7 @@
 	<script>
 
 	function handleDelete(id){
-		const url = `${pageContext.request.contextPath}/dashboard/delete-user?search=<%= searchQuery %>&entries=<%= entries %>&page=<%= currentPage %>&userId=`+id;
+		const url = `${pageContext.request.contextPath}/dashboard/delete-staff?search=<%= searchQuery %>&entries=<%= entries %>&page=<%= currentPage %>&userId=`+id;
 	
 		Swal.fire({
             title: "Are you sure?",
@@ -144,14 +146,15 @@
             }
         });
 	}
-	function showUserDetails(userId, username, useremail, accountStatus, accountType) {
+	function showUserDetails(staffId, username, useremail, accountStatus, accountType, address) {
 	    Swal.fire({
 	        title: "User Details",
 	        html: 
 	            "<div style='text-align: left;'>" +
-	                "<p><strong>User ID:</strong> " + userId + "</p>" +
+	                "<p><strong>Staff ID:</strong> " + staffId + "</p>" +
 	                "<p><strong>Name:</strong> " + username + "</p>" +
 	                "<p><strong>Email:</strong> " + useremail + "</p>" +
+	                "<p><strong>Address:</strong> " + address + "</p>" +
 	                "<p><strong>Account Status:</strong> " + accountStatus + "</p>" +
 	                "<p><strong>Account Type:</strong> " + accountType + "</p>" +
 	            "</div>",

@@ -97,7 +97,7 @@
 		            </c:when>
 		            <c:otherwise>
 		                <tr>
-		                    <td colspan="7" class="text-center">No users found</td>
+		                    <td colspan="7" class="text-center">No data found</td>
 		                </tr>
 		            </c:otherwise>
 		        </c:choose>

@@ -28,11 +28,10 @@ public class CustomerDAOImpl implements CustomerDAO {
             
             try (PreparedStatement userStmt = connection.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS)) {
                 String hashedPassword = PasswordUtils.hashPassword(user.getPassword());
-                userStmt.setString(1, user.getUserName());
-                userStmt.setString(2, user.getUserEmail());
-                userStmt.setString(3, user.getAccountStatus().name());
-                userStmt.setString(4, user.getAccountType().name());
-                userStmt.setString(5, hashedPassword);
+                userStmt.setString(1, user.getUserEmail());
+                userStmt.setString(2, user.getAccountStatus().name());
+                userStmt.setString(3, user.getAccountType().name());
+                userStmt.setString(4, hashedPassword);
                 
                 int affectedRows = userStmt.executeUpdate();
                 if (affectedRows == 0) {

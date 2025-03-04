@@ -57,6 +57,7 @@ public class AddDriverServlet extends HttpServlet {
 		Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN, AccountType.MANAGER);
 		boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
         if (!authorized) {
+	        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Please login");
             return;
         }
         
@@ -65,29 +66,29 @@ public class AddDriverServlet extends HttpServlet {
         String contactNumber = request.getParameter("contactNumber");
         
         if(Objects.isNull(driverName) || driverName.isBlank() || Objects.isNull(nicNumber) || nicNumber.isBlank() || Objects.isNull(contactNumber) || contactNumber.isBlank()) {
-	        request.setAttribute("error", "All fields are required.");
-	        request.getRequestDispatcher("/dashboard/new-driver.jsp").forward(request, response);
+	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "All fields are required.");
 	        return;
         }
 
         
         try {
+        	boolean isDuplicatedDriver = driverController.checkDuplicateDriver(nicNumber, contactNumber);
+        	if(isDuplicatedDriver) {
+                request.setAttribute("error", "Duplicate NIC number or contact number please enter different details");
+                request.getRequestDispatcher("/dashboard/new-driver.jsp").forward(request, response);
+                return;
+        	}
         	
             DriverDTO driverDTO = new DriverDTO(driverName, nicNumber, contactNumber);
             boolean isCreated = driverController.createDriver(driverDTO);
             
             if (isCreated) {
                 response.sendRedirect(request.getContextPath() + "/dashboard/drivers"); 
+                return;
             }
             
         } catch (SQLException e) {
         	
-            if (e.getErrorCode() == 1062) {
-                request.setAttribute("error", "Duplicate NIC or Contact Number. Please enter different details.");
-                request.getRequestDispatcher("/dashboard/new-driver.jsp").forward(request, response);
-                return;
-            }
-            
         	e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
         }
