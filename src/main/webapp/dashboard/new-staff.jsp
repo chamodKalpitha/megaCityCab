@@ -18,8 +18,8 @@
 	
 	<div class="container mt-4">
     <!-- Form Title -->
-	    <h2 class="mb-4 text-center">Add New User</h2>
-	    <form class="mx-auto" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/dashboard/add-user">
+	    <h2 class="mb-4 text-center">Add New Staff</h2>
+	    <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/dashboard/add-staff">
 	        <!-- Name -->
 	        <div class="mb-3">
 	            <label for="name" class="form-label">Name</label>
@@ -30,6 +30,18 @@
 	        <div class="mb-3">
 	            <label for="email" class="form-label">Email</label>
 	            <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
+	        </div>
+	        
+	        <!-- Address -->
+	        <div class="mb-3">
+	            <label for="address" class="form-label">Address</label>
+	            <input type="text" class="form-control" id="address" placeholder="Enter staff address" name="address" required>
+	        </div>
+	        
+	        <!-- Contact Number -->
+	        <div class="mb-3">
+	            <label for="contactNumber" class="form-label">Contact</label>
+	            <input type="text" class="form-control" id="contactNumber" placeholder="Enter contact number" name="contactNumber" required>
 	        </div>
 	
 			<!-- Account type -->

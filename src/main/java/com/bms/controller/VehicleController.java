@@ -1,6 +1,7 @@
 package com.bms.controller;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import com.bms.dao.VehicleDAO;
@@ -53,7 +54,11 @@ public class VehicleController {
         return vehicleDAO.getVehiclesNumberPlate();
     }
     
-    public boolean checkVehicleAvailable(int vehicleId) throws SQLException {
-        return vehicleDAO.checkVehicleAvailable(vehicleId);
+    public boolean checkVehicleAvailable(int vehicleId,Date bookingDate) throws SQLException {
+        return vehicleDAO.checkVehicleAvailable(vehicleId,bookingDate);
+    }
+    
+    public boolean checkDuplicateVehicleNumberPlate(String numberplate) throws SQLException {
+        return vehicleDAO.checkDuplicateVehicleNumberPlate(numberplate);
     }
 }

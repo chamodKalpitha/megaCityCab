@@ -133,4 +133,19 @@ public class DriverDAOImpl implements DriverDAO {
         }
         return driverList;
 	}
+	
+	@Override
+	public boolean checkDuplicateDriver(String NICNumber, String contactNumber) throws SQLException {
+	    String sql = "SELECT driver_id FROM driver WHERE nic_number = ? OR contact_number=?";
+	    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+	        ps.setString(1, NICNumber);
+	        ps.setString(2, contactNumber);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                return true;
+	            }
+	        }
+	    }
+	    return false;
+	}
 }

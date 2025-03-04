@@ -72,29 +72,31 @@ public class AddVehicleServlet extends HttpServlet {
         if(Objects.isNull(vehicleBrand) || Objects.isNull(vehicleModel) || Objects.isNull(plateNumber) || Objects.isNull(capacity) || Objects.isNull(vehicleStatus) ||
         		Objects.isNull(vehicleType) || Objects.isNull(ratePerKM) || Objects.isNull(ratePerDay) || Objects.isNull(vahicleImage)
         		|| vehicleBrand.isBlank() || vehicleModel.isBlank() || plateNumber.isBlank() || vahicleImage.isBlank()) {
-        	request.setAttribute("error", "All fields are required.");
-        	request.getRequestDispatcher("/dashboard/new-vehicle.jsp").forward(request, response);
+	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "All fields are required.");
+	        return;
         }
              
         try {
         	
+        	Boolean isDuplicatePlateNumber = vehicleController.checkDuplicateVehicleNumberPlate(plateNumber);
+        	if(isDuplicatePlateNumber) {
+                request.setAttribute("error", "Duplicate vehicle number plate");
+                request.getRequestDispatcher("/dashboard/new-vehicle.jsp").forward(request, response);
+                return;
+        	}
+        	
             VehicleDTO vehicleDTO = new VehicleDTO(vehicleBrand, vehicleModel, plateNumber, capacity, vehicleStatus, vehicleType, vahicleImage, ratePerKM,ratePerDay);
-            boolean isCreated = vehicleController.createVehicle(vehicleDTO);
             
+            boolean isCreated = vehicleController.createVehicle(vehicleDTO);
             if (isCreated) {
                 response.sendRedirect(request.getContextPath() + "/dashboard/vehicles"); 
             }
             
         } catch (SQLException e) {
         	
-            if (e.getErrorCode() == 1062) {
-                request.setAttribute("error", "Duplicate plate number. Please enter a different plate number.");
-                request.getRequestDispatcher("/dashboard/new-vehicle.jsp").forward(request, response);
-                return;
-            }
-            
         	e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error");
+            
         }
     }
 

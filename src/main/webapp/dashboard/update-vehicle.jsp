@@ -17,7 +17,7 @@
     <div class="container mt-4">
         <h2 class="mb-4 text-center">Edit Vehicle</h2>
         
-        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/dashboard/update-vehicle">
+        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/dashboard/update-vehicle?vehicleId=${vehicle.vehicleId}">
             <!-- Vehicle ID (Read-only) -->
             <div class="mb-3">
                 <label for="vehicleId" class="form-label">Vehicle ID</label>

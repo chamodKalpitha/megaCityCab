@@ -40,7 +40,6 @@ public class BookingDAOImpl implements BookingDAO {
 	    try {
 	        connection.setAutoCommit(false);
 
-	        // Insert booking
 	        bookingStmt = connection.prepareStatement(bookingSql, Statement.RETURN_GENERATED_KEYS);
 	        bookingStmt.setInt(1, booking.getUserId());
 	        bookingStmt.setInt(2, booking.getBookedVehicleId());
@@ -50,25 +49,21 @@ public class BookingDAOImpl implements BookingDAO {
 
 	        int bookingRowsAffected = bookingStmt.executeUpdate();
 
-	        // Retrieve generated booking_id
 	        int bookingId = -1;
 	        rs = bookingStmt.getGeneratedKeys();
 	        if (rs.next()) {
 	            bookingId = rs.getInt(1);
 	        }
 
-	        // Update vehicle status
 	        vehicleUpdateStmt = connection.prepareStatement(vehicleUpdateSql);
-	        vehicleUpdateStmt.setString(1, VehicleStatus.INUSE.name());
+	        vehicleUpdateStmt.setString(1, VehicleStatus.AVAILABLE.name());
 	        vehicleUpdateStmt.setInt(2, booking.getBookedVehicleId());
 
 	        int vehicleRowsAffected = vehicleUpdateStmt.executeUpdate();
 
-	        // Check if both operations were successful
 	        if (bookingRowsAffected > 0 && vehicleRowsAffected > 0 && bookingId != -1) {
 	            connection.commit();
 
-	            // Retrieve and return the created booking
 	            getBookingStmt = connection.prepareStatement(getBookingSql);
 	            getBookingStmt.setInt(1, bookingId);
 	            rs = getBookingStmt.executeQuery();
@@ -106,7 +101,7 @@ public class BookingDAOImpl implements BookingDAO {
         			 "AND c.customer_name LIKE ? LIMIT ? OFFSET ?";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, "%" + search + "%"); // Ensure search is properly formatted
+            stmt.setString(1, "%" + search + "%");
             stmt.setInt(2, limit);
             stmt.setInt(3, offset);
             ResultSet rs = stmt.executeQuery();
@@ -114,7 +109,7 @@ public class BookingDAOImpl implements BookingDAO {
             while (rs.next()) {
             	
             	CustomerDTO customer = new CustomerDTO(
-                        rs.getInt("user_id"),
+                        rs.getInt("customer_id"),
                         rs.getString("customer_name"),
                         rs.getString("address"),
                         rs.getString("nic_number"),
@@ -142,7 +137,7 @@ public class BookingDAOImpl implements BookingDAO {
                         rs.getInt("user_id"),
                         rs.getInt("booked_vehicle_id"),
                         rs.getObject("driver_id") != null ? rs.getInt("driver_id") : null,
-                        rs.getDate("booking_date"), // Retrieves as java.sql.Date
+                        rs.getDate("booking_date"),
                         BookingStatus.valueOf(rs.getString("booking_status")),
                         PricingType.valueOf(rs.getString("pricing_type")),
                         vehicle,
@@ -156,7 +151,12 @@ public class BookingDAOImpl implements BookingDAO {
 
     @Override
     public int getBookingsCount(String search) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM booking WHERE is_delete = false AND DATE_FORMAT(booking_date, '%Y-%m-%d') LIKE ?";
+    	
+    	String sql = "SELECT COUNT(*) AS total FROM booking b " +
+                "JOIN vehicle v ON b.booked_vehicle_id = v.vehicle_id " +
+                "JOIN customer c ON b.user_id = c.user_id " +
+                "WHERE b.is_delete = 0 " +
+                "AND c.customer_name LIKE LOWER(?) ";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, "%" + search + "%");
             ResultSet rs = stmt.executeQuery();
@@ -218,17 +218,25 @@ public class BookingDAOImpl implements BookingDAO {
 
     @Override
     public boolean updateBooking(Booking booking) throws SQLException {
-        String sql = "UPDATE booking SET booked_vehicle_id = ?, booking_status = ?,driver_id = ?, pricing_type = ?, booking_date = ? WHERE booking_id = ?";
+        String sql = "UPDATE booking SET booked_vehicle_id = ?, booking_status = ?, driver_id = ?, pricing_type = ?, booking_date = ? WHERE booking_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-        	stmt.setInt(1, booking.getBookedVehicleId());
+            stmt.setInt(1, booking.getBookedVehicleId());
             stmt.setString(2, booking.getBookingStatus().name());
-            stmt.setInt(3, booking.getDriverId());
+            
+            if (booking.getDriverId() != null) {
+                stmt.setInt(3, booking.getDriverId());
+            } else {
+                stmt.setNull(3, java.sql.Types.INTEGER);
+            }
+            
             stmt.setString(4, booking.getPricingType().name());
             stmt.setDate(5, new java.sql.Date(booking.getBookingDate().getTime())); // Convert java.util.Date to java.sql.Date
             stmt.setInt(6, booking.getBookingId());
+            
             return stmt.executeUpdate() > 0;
         }
     }
+
 
     @Override
     public boolean deleteBooking(int bookingId) throws SQLException {

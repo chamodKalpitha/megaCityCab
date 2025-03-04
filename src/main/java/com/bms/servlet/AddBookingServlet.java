@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,8 +20,10 @@ import com.bms.dao.BookingDAOImpl;
 import com.bms.dao.VehicleDAO;
 import com.bms.dao.VehicleDAOImpl;
 import com.bms.dto.BookingDTO;
+import com.bms.enums.AccountType;
 import com.bms.enums.PricingType;
 import com.bms.service.EmailService;
+import com.bms.utils.AuthUtils;
 import com.bms.utils.InputValidator;
 
 
@@ -42,8 +45,13 @@ public class AddBookingServlet extends HttpServlet {
     }
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		HttpSession session = request.getSession(false); 
-
+		
+		if (!AuthUtils.isAuthenticated(request, response)) {
+            return;
+        }
+		
         Date bookingDate  = InputValidator.isValidDate(request.getParameter("bookingDate"));
         PricingType pricingType = InputValidator.parsePricingType(request.getParameter("pricingType"));
         Integer userId = InputValidator.parseInteger(session.getAttribute("customerId").toString());
@@ -72,7 +80,7 @@ public class AddBookingServlet extends HttpServlet {
         
         try {
         	
-        	boolean isAvailable = vehicleController.checkVehicleAvailable(vehicleId);
+        	boolean isAvailable = vehicleController.checkVehicleAvailable(vehicleId,bookingDate);
         	if(!isAvailable) {
                 response.sendRedirect("/megaCityCab/vehicles?search="+ searchQuery + "&entries="+entries+"&page="+currentPage+"&error=Sorry!. Someone booked vehicle minutes ago");
                 return;

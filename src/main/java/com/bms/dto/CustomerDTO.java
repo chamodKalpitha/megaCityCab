@@ -6,37 +6,34 @@ public class CustomerDTO {
     private String address;
     private String nicNumber;
     private String contactNumber;
-    private int userId;
+    private UserDTO userDTO;
 
     public CustomerDTO() {}
-
-    public CustomerDTO(int customerId, String customerName, String address, String nicNumber, String contactNumber,
-			int userId) {
-		super();
-		this.customerId = customerId;
-		this.customerName = customerName;
-		this.address = address;
-		this.nicNumber = nicNumber;
-		this.contactNumber = contactNumber;
-		this.userId = userId;
-	}
     
-    
-
-	public CustomerDTO(int customerId, String customerName, String address, String nicNumber, String contactNumber) {
-		super();
-		this.customerId = customerId;
-		this.customerName = customerName;
-		this.address = address;
-		this.nicNumber = nicNumber;
-		this.contactNumber = contactNumber;
-	}
-
 	public CustomerDTO(String customerName, String address, String nicNumber, String contactNumber) {
 		this.customerName = customerName;
 		this.address = address;
 		this.nicNumber = nicNumber;
 		this.contactNumber = contactNumber;
+	}
+
+    public CustomerDTO(int customerId, String customerName, String address, String nicNumber, String contactNumber) {
+		super();
+		this.customerId = customerId;
+		this.customerName = customerName;
+		this.address = address;
+		this.nicNumber = nicNumber;
+		this.contactNumber = contactNumber;
+	}
+    
+	public CustomerDTO(int customerId, String customerName, String address, String nicNumber, String contactNumber,
+			UserDTO userDTO) {
+		this.customerId = customerId;
+		this.customerName = customerName;
+		this.address = address;
+		this.nicNumber = nicNumber;
+		this.contactNumber = contactNumber;
+		this.userDTO = userDTO;
 	}
 
 	public int getCustomerId() {
@@ -79,12 +76,12 @@ public class CustomerDTO {
 		this.contactNumber = contactNumber;
 	}
 
-	public int getUserId() {
-		return userId;
+	public UserDTO getUserDTO() {
+		return userDTO;
 	}
 
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setUserDTO(UserDTO userDTO) {
+		this.userDTO = userDTO;
 	}
 
 }

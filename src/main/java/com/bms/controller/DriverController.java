@@ -57,4 +57,8 @@ public class DriverController {
     public List<DriverDTO> getDriversID() throws SQLException {
         return driverDAO.getDriversId();
     }
+    
+    public boolean checkDuplicateDriver(String NICNumber, String contactNumber) throws SQLException {
+        return driverDAO.checkDuplicateDriver(NICNumber,contactNumber);
+    }
 }

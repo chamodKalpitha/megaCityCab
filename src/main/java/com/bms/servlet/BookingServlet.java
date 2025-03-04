@@ -45,13 +45,13 @@ public class BookingServlet extends HttpServlet {
            
         try {
         	
-            String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
+            String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : " ";
             int entries = request.getParameter("entries") != null ? Integer.parseInt(request.getParameter("entries")) : 10;
             int currentPage = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
             int offset = (currentPage - 1) * entries;
             
 			List<BookingDTO> bookings = controller.getBookings(searchQuery, entries, offset);
-			
+					
 			request.setAttribute("bookings", bookings);
 	        request.setAttribute("page", currentPage);
 	        request.setAttribute("count", controller.getBookingsCount(searchQuery));
