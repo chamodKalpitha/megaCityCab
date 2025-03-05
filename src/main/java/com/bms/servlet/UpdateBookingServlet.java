@@ -2,8 +2,6 @@ package com.bms.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -121,20 +119,6 @@ public class UpdateBookingServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Booking not found");
                 return;
             }
-            
-        	boolean isAvailable = vehicleController.checkVehicleAvailable(bookedVehicleId,bookingDate);
-        	
-        	if(!isAvailable) {
-        		System.out.println("hit");
-                List<VehicleDTO> vehicles = vehicleController.getVehiclesNumberPlate();
-                List<DriverDTO> drivers = driverController.getDriversID();
-                request.setAttribute("booking", bookingDTO);
-                request.setAttribute("vehicles", vehicles);
-                request.setAttribute("drivers", drivers);
-                request.getRequestDispatcher("/dashboard/update-booking.jsp?bookingId=" + bookingId).forward(request, response);
-                return;
-        	}
-            
             
             boolean isUpdated = bookingController.updateBooking(bookingDTO);
             if (isUpdated) {

@@ -69,6 +69,7 @@ public class BookingDAOImpl implements BookingDAO {
 	            rs = getBookingStmt.executeQuery();
 
 	            if (rs.next()) {
+	            	System.out.println(rs.getInt("booking_id"));
 	                return new BookingDTO(
 	                        rs.getInt("booking_id")
 	                );
@@ -170,12 +171,13 @@ public class BookingDAOImpl implements BookingDAO {
                      "JOIN vehicle v ON b.booked_vehicle_id = v.vehicle_id " +
                      "JOIN customer c ON b.user_id = c.user_id " +
                      "JOIN app_user a on b.user_id = a.user_id " +
-                     "WHERE b.booking_id = ? AND b.is_delete = false";
+                     "WHERE b.booking_id = ? AND b.is_delete = 0";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, bookingId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
+            	System.out.println("hit2");
                 CustomerDTO customer = new CustomerDTO(
                         rs.getInt("user_id"),
                         rs.getString("customer_name"),
@@ -198,7 +200,7 @@ public class BookingDAOImpl implements BookingDAO {
                 );
                 
                 UserDTO userDTO = new UserDTO(rs.getInt("user_id"), rs.getString("user_email"));
-
+                
                 return new BookingDTO(
                         rs.getInt("booking_id"),
                         rs.getInt("user_id"),
