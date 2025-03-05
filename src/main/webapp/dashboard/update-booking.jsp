@@ -17,7 +17,7 @@
     <div class="container mt-4">
         <h2 class="mb-4 text-center">Edit Booking</h2>
         
-        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/dashboard/update-booking">
+        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/dashboard/update-booking?bookingId=${booking.bookingId}">
             <!-- Booking ID (Read-only) -->
             <div class="mb-3">
                 <label for="bookingId" class="form-label">Booking ID</label>
@@ -38,7 +38,7 @@
 
             <!-- Booking Date -->
             <div class="mb-3">
-                <label for="bookingDate" class="form-label">Booking Date</label>
+                <label for="bookingDate" class="form-label">Booking Date ${booking.bookingDate}</label>
                 <input type="date" class="form-control" id="bookingDate" name="bookingDate" value="${booking.bookingDate}" required>
             </div>
 
