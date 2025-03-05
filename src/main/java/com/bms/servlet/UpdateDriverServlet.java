@@ -103,10 +103,6 @@ public class UpdateDriverServlet extends HttpServlet {
 
 	    if (driverName == null || nicNumber == null || contactNumber == null || driverStatus == null ||
 	        driverName.isBlank() || nicNumber.isBlank() || contactNumber.isBlank()) {
-	    	System.out.println(driverName);
-	    	System.out.println(nicNumber);
-	    	System.out.println(contactNumber);
-	    	System.out.println(driverStatus);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "All fields are required.");
 	        return;
 	    }
