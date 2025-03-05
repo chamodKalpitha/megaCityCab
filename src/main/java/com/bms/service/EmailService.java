@@ -19,6 +19,7 @@ public class EmailService implements BookingObserver {
     }
 
     public void sendBookingConfirmation(BookingDTO bookingDTO) {
+    	
         String customerEmail = bookingDTO.getUserDTO().getUserEmail();
         String vehicleModel = bookingDTO.getVehicleDTO().getVehicleBrand() + " " + bookingDTO.getVehicleDTO().getVehicleModel();
         String vehicleNumberPlate = bookingDTO.getVehicleDTO().getPlateNumber();
