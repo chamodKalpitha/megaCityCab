@@ -9,6 +9,7 @@ import com.bms.enums.AccountStatus;
 import com.bms.enums.AccountType;
 import com.bms.enums.BookingStatus;
 import com.bms.enums.DriverStatus;
+import com.bms.enums.PaymentMethod;
 import com.bms.enums.PricingType;
 import com.bms.enums.VehicleStatus;
 import com.bms.enums.VehicleType;
@@ -158,6 +159,17 @@ public class InputValidator {
         }
         try {
             return BookingStatus.valueOf(value.toUpperCase()); 
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+    
+    public static PaymentMethod parsePaymentMethod(String value) {
+        if (value == null || value.isEmpty()) {
+            return null; 
+        }
+        try {
+            return PaymentMethod.valueOf(value.toUpperCase()); 
         } catch (IllegalArgumentException e) {
             return null;
         }
