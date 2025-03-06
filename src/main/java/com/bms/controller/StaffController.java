@@ -56,4 +56,17 @@ public class StaffController {
     public boolean isContactNumberDuplicate(String contactNumber) throws SQLException {
     	return staffDAO.isContactNumberDuplicate(contactNumber);
     }
+    
+    public boolean updateStaffProfile(StaffDTO staffDTO) throws SQLException, IllegalArgumentException{	
+    	
+    	User user = new User(staffDTO.getUserDTO().getUserId(),staffDTO.getUserDTO().getUserEmail());
+    	Staff staff = new Staff(staffDTO.getName(),staffDTO.getAddress(),staffDTO.getContactNumber());
+    	
+    	return staffDAO.updateStaffProfile(user,staff);
+    	
+    }
+    
+    public StaffDTO getStaffByUserId(int userId) throws SQLException {
+    	return staffDAO.getStaffByUserId(userId);
+    }
 }

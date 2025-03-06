@@ -87,15 +87,22 @@ public class LoginServlet extends HttpServlet {
             } 
             
             if(responseLoginDTO.getAccountType() == AccountType.ADMIN) {
+            	session.setAttribute("staffId", responseLoginDTO.getUserId());
             	session.setAttribute("accountType", responseLoginDTO.getAccountType());
                 response.sendRedirect(request.getContextPath()+"/dashboard/staffs"); 
+            }
+            
+            if(responseLoginDTO.getAccountType() == AccountType.MANAGER || responseLoginDTO.getAccountType() == AccountType.STAFF) {
+            	session.setAttribute("staffId", responseLoginDTO.getUserId());
+            	session.setAttribute("accountType", responseLoginDTO.getAccountType());
+                response.sendRedirect(request.getContextPath()+"/dashboard/bookings"); 
             }
             
             if(responseLoginDTO.getAccountType() == AccountType.CUSTOMER) {
             	session.setAttribute("customerId", responseLoginDTO.getUserId());
             	session.setAttribute("accountType", responseLoginDTO.getAccountType());
                 response.sendRedirect(request.getContextPath()+"/vehicles"); 
-            }
+            } 
             
         } catch (SQLException e) {
         	

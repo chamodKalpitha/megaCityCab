@@ -13,8 +13,9 @@ public interface StaffDAO {
 	public int getStaffsCount(String search) throws SQLException;
 	public boolean deleteStaff(int staffId) throws SQLException;
 	public StaffDTO getStaffById(int staffId) throws SQLException;
+	public StaffDTO getStaffByUserId(int userId) throws SQLException;
 	public boolean updateStaff(User user, Staff staff ) throws SQLException;
 	public boolean isEmailDuplicate(String email) throws SQLException;
     public boolean isContactNumberDuplicate(String contactNumber) throws SQLException;
-
+	public boolean updateStaffProfile(User user, Staff staff ) throws SQLException;
 }
