@@ -118,14 +118,18 @@ public class UpdateDriverServlet extends HttpServlet {
 	            return;
 	        }
 	        
-	        Boolean isDuplicateContactDetails = driverController.checkDuplicateDriver(nicNumber, contactNumber);
 	        
-	        if(isDuplicateContactDetails) {
-	            request.setAttribute("driver", driverDTO);
-                request.setAttribute("error", "Duplicate NIC Number or contact Number");
-                request.getRequestDispatcher("/dashboard/update-driver.jsp?driverId=" + driverId).forward(request, response);
-                return;
+	        if(!contactNumber.equals(existingDriver.getContactNumber()) || !nicNumber.equals(existingDriver.getNicNumber())) {
+		        Boolean isDuplicateContactDetails = driverController.checkDuplicateDriver(nicNumber, contactNumber);
+		        
+		        if(isDuplicateContactDetails) {
+		            request.setAttribute("driver", driverDTO);
+	                request.setAttribute("error", "Duplicate NIC Number or contact Number");
+	                request.getRequestDispatcher("/dashboard/update-driver.jsp?driverId=" + driverId).forward(request, response);
+	                return;
+		        }
 	        }
+
 
 	        boolean isUpdated = driverController.updateDriver(driverDTO);
 	        if (isUpdated) {
