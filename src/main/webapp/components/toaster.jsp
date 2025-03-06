@@ -22,12 +22,12 @@
 <c:if test="${not empty success}">
     <script>
         $(document).ready(function(){
-            $('#errorToast').toast('show');
+            $('#sucessToast').toast('show');
         });
     </script>
 </c:if>
 		
-<div id="errorToast" class="toast bg-success" style="position: absolute; bottom: 10px; right: 10px;" data-autohide="false">
+<div id="sucessToast" class="toast bg-success" style="position: absolute; bottom: 10px; right: 10px;" data-autohide="false">
 	<div class="d-flex">
 	    <div class="toast-body text-white">
 	    <c:out value="${success}"/>
