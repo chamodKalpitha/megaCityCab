@@ -115,18 +115,21 @@ public class UpdateStaffServlet extends HttpServlet {
 	            return;
 	        }
         	
-        	if(staffController.isEmailDuplicate(email)) {
-                request.setAttribute("error", "Duplicate email please enter different email");
-                request.getRequestDispatcher("/dashboard/update-staff.jsp?staffId=" + staffId).forward(request, response);
-                return; 
-        	}
-
+	        if(!email.equals(exsistingStaff.getUserDTO().getUserEmail())) {
+	        	if(staffController.isEmailDuplicate(email)) {
+	                request.setAttribute("error", "Duplicate email please enter different email");
+	                request.getRequestDispatcher("/dashboard/update-staff.jsp?staffId=" + staffId).forward(request, response);
+	                return; 
+	        	}
+	        }
         	
-         	if(staffController.isContactNumberDuplicate(contactNumber)) {
-                request.setAttribute("error", "Duplicate contact number please enter different contact");
-                request.getRequestDispatcher("/dashboard/update-staff.jsp?staffId=" + staffId).forward(request, response);
-                return;
-        	}
+	        if(!contactNumber.equals(exsistingStaff.getContactNumber())) {
+	         	if(staffController.isContactNumberDuplicate(contactNumber)) {
+	                request.setAttribute("error", "Duplicate contact number please enter different contact");
+	                request.getRequestDispatcher("/dashboard/update-staff.jsp?staffId=" + staffId).forward(request, response);
+	                return;
+	        	}
+	        }
          	
         	UserDTO userDTO = new UserDTO(exsistingStaff.getUserDTO().getUserId(),email,accountType,accountStatus);
             StaffDTO staffDTO = new StaffDTO(name, address, contactNumber,userDTO);
