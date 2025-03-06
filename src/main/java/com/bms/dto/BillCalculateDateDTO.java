@@ -5,7 +5,7 @@ import com.bms.enums.PaymentMethod;
 public class BillCalculateDateDTO {
 	private BookingDTO bookingDTO;
 	private double kmCount;
-	private int dayCout;
+	private long dayCout;
 	private double driverDaySalary;
 	private double driverKmSalary;
 	private VehicleDTO vehicleDTO;
@@ -25,10 +25,10 @@ public class BillCalculateDateDTO {
 	public void setKmCount(double kmCount) {
 		this.kmCount = kmCount;
 	}
-	public int getDayCout() {
+	public long getDayCout() {
 		return dayCout;
 	}
-	public void setDayCout(int dayCout) {
+	public void setDayCout(long dayCout) {
 		this.dayCout = dayCout;
 	}
 	public double getDriverDaySalary() {

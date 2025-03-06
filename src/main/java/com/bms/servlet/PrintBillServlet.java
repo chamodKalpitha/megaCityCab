@@ -2,6 +2,11 @@ package com.bms.servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -174,27 +179,51 @@ public class PrintBillServlet extends HttpServlet {
             
             if(pricingType==PricingType.PER_DAY_WITH_DRIVER) {
             	
-                Integer completedDate = InputValidator.parseInteger(request.getParameter("completedDate"));
+                Date completedDate = InputValidator.isValidDate(request.getParameter("completedDate"));
                 Double driverCharges = InputValidator.parseDouble(request.getParameter("driverCharges"));
 
                 if(completedDate==null || driverCharges==null) {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "completed Date count and Driver Charges required");
                     return;
                 }
-                billCalculateDateDTO.setDayCout(completedDate);
+                
+                // Convert Date to Calendar
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(bookingDTO.getBookingDate());
+                LocalDate startDate = LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+
+                calendar.setTime(completedDate);
+                LocalDate endDate = LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+
+                // Calculate Day Count (Inclusive)
+                long dayCount = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+
+                billCalculateDateDTO.setDayCout(dayCount);
                 billCalculateDateDTO.setDriverDaySalary(driverCharges);
 
             }
             
             if(pricingType==PricingType.PER_DAY_WITHOUT_DRIVER) {
             	
-                Integer completedDate = InputValidator.parseInteger(request.getParameter("completedDate"));
+                Date completedDate = InputValidator.isValidDate(request.getParameter("completedDate"));
 
                 if(completedDate==null ) {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "completed Date count required");
                     return;
                 }
-                billCalculateDateDTO.setDayCout(completedDate);
+                
+                // Convert Date to Calendar
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(bookingDTO.getBookingDate());
+                LocalDate startDate = LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+
+                calendar.setTime(completedDate);
+                LocalDate endDate = LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+
+                // Calculate Day Count (Inclusive)
+                long dayCount = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+                
+                billCalculateDateDTO.setDayCout(dayCount);
 
             }
               

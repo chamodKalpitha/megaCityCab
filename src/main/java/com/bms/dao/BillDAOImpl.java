@@ -69,13 +69,15 @@ public class BillDAOImpl implements BillDAO{
                 if(bookingDTO.getPricingType()==PricingType.PER_DAY_WITH_DRIVER || bookingDTO.getPricingType()==PricingType.PER_DAY_WITHOUT_DRIVER) {
                 	billDTO = new BillDTO(rs.getInt("bill_id"),
                             rs.getInt("booking_id"),
-                            rs.getDouble("total_days"),
+                            rs.getInt("total_days"),
                             rs.getDouble("total_amount"),
                             rs.getDouble("tax_amount"),
                             PaymentMethod.valueOf(rs.getString("payment_method")),
                             bookingDTO,
                             vehicleDTO);
+
                 }else {
+
                 	billDTO = new BillDTO(rs.getInt("bill_id"),
                             rs.getInt("booking_id"),
                             rs.getDouble("total_KM"),

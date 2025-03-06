@@ -21,7 +21,7 @@ public class BillController {
     public boolean createBill(BillCalculateDateDTO billCalculateDateDTO ) throws SQLException {
         BillingService billingService = new BillingService();
     	BillDTO billDTO = billingService.generateBill(billCalculateDateDTO);
-    	Bill bill = new Bill(billCalculateDateDTO.getBookingDTO().getBookingId(), billCalculateDateDTO.getKmCount(), billCalculateDateDTO.getDayCout(), billDTO.getTotalAmount(), billDTO.getTotalTax(), billCalculateDateDTO.getPaymentMethod());
+    	Bill bill = new Bill(billCalculateDateDTO.getBookingDTO().getBookingId(), billCalculateDateDTO.getKmCount(), (int) billCalculateDateDTO.getDayCout(), billDTO.getTotalAmount(), billDTO.getTotalTax(), billCalculateDateDTO.getPaymentMethod());
         return billDAO.createBill(bill);
     }
     

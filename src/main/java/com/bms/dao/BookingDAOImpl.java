@@ -69,7 +69,6 @@ public class BookingDAOImpl implements BookingDAO {
 	            rs = getBookingStmt.executeQuery();
 
 	            if (rs.next()) {
-	            	System.out.println(rs.getInt("booking_id"));
 	                return new BookingDTO(
 	                        rs.getInt("booking_id")
 	                );
@@ -177,7 +176,6 @@ public class BookingDAOImpl implements BookingDAO {
             stmt.setInt(1, bookingId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-            	System.out.println("hit2");
                 CustomerDTO customer = new CustomerDTO(
                         rs.getInt("user_id"),
                         rs.getString("customer_name"),

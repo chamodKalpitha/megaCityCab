@@ -4,6 +4,8 @@ import com.bms.dto.BillCalculateDateDTO;
 import com.bms.dto.BillDTO;
 import com.bms.enums.PricingType;
 import com.bms.strategy.billing.BillCalculator;
+import com.bms.strategy.billing.PerDayWithDriver;
+import com.bms.strategy.billing.PerDayWithoutDriver;
 import com.bms.strategy.billing.PerKmWithDriver;
 import com.bms.strategy.billing.PerKmWithoutDriver;
 
@@ -16,6 +18,12 @@ public class BillingService {
 		}
 		case PER_KM_WITHOUT_DRIVER: {
 			return new PerKmWithoutDriver();
+		}
+		case PER_DAY_WITH_DRIVER: {
+			return new PerDayWithDriver();
+		}
+		case PER_DAY_WITHOUT_DRIVER: {
+			return new PerDayWithoutDriver();
 		}
 		default:
 			throw new IllegalArgumentException("Invalid pricing type");
