@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,7 +19,6 @@ import com.bms.dao.BookingDAOImpl;
 import com.bms.dao.VehicleDAO;
 import com.bms.dao.VehicleDAOImpl;
 import com.bms.dto.BookingDTO;
-import com.bms.enums.AccountType;
 import com.bms.enums.PricingType;
 import com.bms.service.EmailService;
 import com.bms.utils.AuthUtils;

@@ -42,12 +42,10 @@ public class BookingController implements BookingSubject {
     	booking.setBookingDate(BookingDTO.getBookingDate());
     	booking.setBookingStatus(BookingStatus.PENDING);
     	booking.setPricingType(BookingDTO.getPricingType());
-    	
     	BookingDTO bookingIdDto = bookingDAO.createBooking(booking);
     	int bookingId = bookingIdDto.getBookingId();
         if(bookingId > 0) {
-            BookingDTO createdBooking = bookingDAO.getBookingById(16);
-
+            BookingDTO createdBooking = bookingDAO.getBookingById(bookingId);
             notifyObservers(createdBooking);
             return true;
         }

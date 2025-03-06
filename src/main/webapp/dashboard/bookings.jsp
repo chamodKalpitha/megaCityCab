@@ -91,7 +91,9 @@
 								    ${booking.pricingType}
 								</td>
 		                        <td class="d-flex justify-content-center gap-2 h-full">
-		                        	<button class="btn btn-sm btn-danger" data-user-id="${booking.bookingId}" onclick="handleDelete(${booking.bookingId})"><i class="bi bi-receipt"></i></button>
+			                        <c:if test="${booking.bookingStatus eq 'COMPLETED'}">
+			                        	<a href="${pageContext.request.contextPath}/dashboard/print-bill?bookingId=${booking.bookingId}" class="btn btn-sm btn-dark"><i class="bi bi-receipt"></i></a>
+			                        </c:if>
 			                        <a href="${pageContext.request.contextPath}/dashboard/update-booking?bookingId=${booking.bookingId}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
 			                        <button class="btn btn-sm btn-info" class="btn btn-sm btn-info" 
 			                        onclick="showBookingDetails(${booking.bookingId}, ${booking.customerDTO.customerId}, ${booking.bookedVehicleId}, '${booking.bookingDate}', '${booking.bookingStatus}', '${driverIdValue}', ' ${booking.pricingType}')"><i class="bi bi-eye"></i></button>

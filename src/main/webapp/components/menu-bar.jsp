@@ -29,7 +29,6 @@
                         <li class="nav-item"><a class="nav-link" href="vehicles">Vehicles</a></li>
                         <li class="nav-item"><a class="nav-link" href="drivers">Drivers</a></li>
                         <li class="nav-item"><a class="nav-link" href="bookings">Bookings</a></li>
-                        <li class="nav-item"><a class="nav-link" href="billings">Billing</a></li>
                         <li class="nav-item"><a class="nav-link" href="profile">Profile</a></li>
                     </c:if>
 
@@ -37,7 +36,6 @@
                         <li class="nav-item"><a class="nav-link" href="vehicles">Vehicles</a></li>
                         <li class="nav-item"><a class="nav-link" href="drivers">Drivers</a></li>
                         <li class="nav-item"><a class="nav-link" href="bookings">Bookings</a></li>
-                        <li class="nav-item"><a class="nav-link" href="billings">Billing</a></li>
                         <li class="nav-item"><a class="nav-link" href="profile">Profile</a></li>
                     </c:if>
 
@@ -46,14 +44,12 @@
                         <li class="nav-item"><a class="nav-link" href="drivers">Drivers</a></li>
                         <li class="nav-item"><a class="nav-link" href="bookings">Bookings</a></li>
                         <li class="nav-item"><a class="nav-link" href="customers">Customers</a></li>
-                        <li class="nav-item"><a class="nav-link" href="billings">Billing</a></li>
                         <li class="nav-item"><a class="nav-link" href="profile">Profile</a></li>
                     </c:if>
 
                     <c:if test="${not empty sessionScope.accountType and sessionScope.accountType eq 'CUSTOMER'}">
                         <li class="nav-item"><a class="nav-link" href="vehicles">Vehicles</a></li>
                         <li class="nav-item"><a class="nav-link" href="bookings">Bookings</a></li>
-                        <li class="nav-item"><a class="nav-link" href="billings">Billing</a></li>
                         <li class="nav-item"><a class="nav-link" href="profile">Profile</a></li>
                     </c:if>
                     
