@@ -10,6 +10,18 @@ public class CustomerDTO {
 
     public CustomerDTO() {}
     
+    
+    
+	public CustomerDTO(String customerName, String address, String contactNumber, UserDTO userDTO) {
+		super();
+		this.customerName = customerName;
+		this.address = address;
+		this.contactNumber = contactNumber;
+		this.userDTO = userDTO;
+	}
+
+
+
 	public CustomerDTO(String customerName, String address, String nicNumber, String contactNumber) {
 		this.customerName = customerName;
 		this.address = address;

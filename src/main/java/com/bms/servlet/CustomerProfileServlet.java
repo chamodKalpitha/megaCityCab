@@ -12,9 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.bms.controller.CustomerController;
 import com.bms.controller.StaffController;
+import com.bms.dao.CustomerDAO;
+import com.bms.dao.CustomerDAOImpl;
 import com.bms.dao.StaffDAO;
 import com.bms.dao.StaffDAOImpl;
+import com.bms.dto.CustomerDTO;
 import com.bms.dto.StaffDTO;
 import com.bms.dto.UserDTO;
 import com.bms.enums.AccountType;
@@ -24,15 +28,15 @@ import com.bms.utils.InputValidator;
 /**
  * Servlet implementation class UpdateUserServlet
  */
-@WebServlet("/dashboard/profile")
-public class ProfileServlet extends HttpServlet {
+@WebServlet("/profile")
+public class CustomerProfileServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private StaffController staffController;
+	private CustomerController customerController;
 	
 	@Override
     public void init() {
-        StaffDAO staffDAO = new StaffDAOImpl();
-        this.staffController = new StaffController(staffDAO);
+        CustomerDAO customerDAO = new CustomerDAOImpl();
+        this.customerController = new CustomerController(customerDAO);
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -41,32 +45,30 @@ public class ProfileServlet extends HttpServlet {
 	        return;
 	    }
 
-	    Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN,AccountType.MANAGER,AccountType.STAFF);
+	    Set<AccountType> allowedRoles = Set.of(AccountType.ADMIN,AccountType.MANAGER,AccountType.STAFF,AccountType.CUSTOMER);
 	    boolean authorized = AuthUtils.isAuthorized(request, response, allowedRoles);
 	    if (!authorized) {
 	        return;
 	    }
 	    
 	    HttpSession session = request.getSession(false);
-        Integer staffId = InputValidator.parseInteger(session.getAttribute("staffId").toString());
-        System.out.println(staffId);
+        Integer customerId = InputValidator.parseInteger(session.getAttribute("customerId").toString());
 
-	    if (staffId == null || staffId <= 0) {
-	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid User ID");
+	    if (customerId == null || customerId <= 0) {
+	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Customer ID");
 	        return;
 	    }
 
 	    try {
-	    	
-	        StaffDTO staffDTO = staffController.getStaffByUserId(staffId);
+	        CustomerDTO customerDTO = customerController.getCustomerById(customerId);
 	        
-	        if (Objects.isNull(staffDTO)) {
-	            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Staff not found");
+	        if (Objects.isNull(customerDTO)) {
+	            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Customer not found");
 	            return;
 	        }
 
-	        request.setAttribute("staff", staffDTO);
-	        request.getRequestDispatcher("/dashboard/profile.jsp").forward(request, response);
+	        request.setAttribute("customer", customerDTO);
+	        request.getRequestDispatcher("/customer/profile.jsp").forward(request, response);
 	        
 	    } catch (SQLException e) {
 	    	
@@ -90,9 +92,9 @@ public class ProfileServlet extends HttpServlet {
 	        return;
 	    }
 
-	    Integer staffId = InputValidator.parseInteger(request.getParameter("staffId"));
-	    if (staffId == null || staffId <= 0) {
-	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid User ID");
+	    Integer customerId = InputValidator.parseInteger(request.getParameter("customerId"));
+	    if (customerId == null || customerId <= 0) {
+	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Customer ID");
 	        return;
 	    }
 
@@ -100,11 +102,6 @@ public class ProfileServlet extends HttpServlet {
         String email = InputValidator.isValidEmail(request.getParameter("email"));
         String address = request.getParameter("address");
         String contactNumber = InputValidator.isValidPhoneNumber(request.getParameter("contactNumber"));
-        
-        if(Objects.isNull(email)) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email");
-	        return;
-        }
 
         if(Objects.isNull(name) || name.isBlank() || Objects.isNull(email) || Objects.isNull(address) || address.isBlank() || Objects.isNull(contactNumber)) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "All fields are required.");
@@ -113,38 +110,38 @@ public class ProfileServlet extends HttpServlet {
 	    
         try {
         	
-	        StaffDTO exsistingStaff = staffController.getStaffById(staffId);
-    		request.setAttribute("staff", exsistingStaff);
+	        CustomerDTO exsistingCustomer = customerController.getCustomerById(customerId);
+    		request.setAttribute("customer", exsistingCustomer);
 
-	        if (Objects.isNull(exsistingStaff)) {
-	            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Staff not found");
+	        if (Objects.isNull(exsistingCustomer)) {
+	            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Customer not found");
 	            return;
 	        }
 	              
-	        if(!email.equals(exsistingStaff.getUserDTO().getUserEmail())) {
-	        	if(staffController.isEmailDuplicate(email)) {
+	        if(!email.equals(exsistingCustomer.getUserDTO().getUserEmail())) {
+	        	if(customerController.isEmailDuplicate(email)) {
 	                request.setAttribute("error", "Duplicate email please enter different email");
-	                request.getRequestDispatcher("/dashboard/profile.jsp").forward(request, response);
+	                request.getRequestDispatcher("/customer/profile.jsp").forward(request, response);
 	                return; 
 	        	}	
 	        }
 
-	        if(!contactNumber.equals(exsistingStaff.getContactNumber())) {
-	         	if(staffController.isContactNumberDuplicate(contactNumber)) {
+	        if(!contactNumber.equals(exsistingCustomer.getContactNumber())) {
+	         	if(customerController.isContactNumberDuplicate(contactNumber)) {
 	                request.setAttribute("error", "Duplicate contact number please enter different contact");
-	                request.getRequestDispatcher("/dashboard/profile.jsp").forward(request, response);
+	                request.getRequestDispatcher("/customer/profile.jsp").forward(request, response);
 	                return;
 	        	}
 	        }
 
-        	UserDTO userDTO = new UserDTO(exsistingStaff.getUserDTO().getUserId(),email);
-            StaffDTO staffDTO = new StaffDTO(name, address, contactNumber,userDTO);
+        	UserDTO userDTO = new UserDTO(exsistingCustomer.getUserDTO().getUserId(),email);
+            CustomerDTO customerDto = new CustomerDTO(name, address, contactNumber,userDTO);
             
-            boolean isUpdated = staffController.updateStaffProfile(staffDTO);
+            boolean isUpdated = customerController.updateCustomer(customerDto);
             if (isUpdated) {
             	request.setAttribute("success","Profile updated successfully");
-    	        request.setAttribute("staff", staffDTO);
-    	        request.getRequestDispatcher("/dashboard/profile.jsp").forward(request, response);
+        		request.setAttribute("customer", customerDto);
+    	        request.getRequestDispatcher("/customer/profile.jsp").forward(request, response);
             } 
             
         } catch (SQLException e) {

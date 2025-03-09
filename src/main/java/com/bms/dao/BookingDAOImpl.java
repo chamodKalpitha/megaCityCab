@@ -236,11 +236,108 @@ public class BookingDAOImpl implements BookingDAO {
             return stmt.executeUpdate() > 0;
         }
     }
+    
+    @Override
+    public boolean updateBookingByCustomer(Booking booking) throws SQLException {
+        String sql = "UPDATE booking SET booked_vehicle_id = ?, pricing_type = ?, booking_date = ? WHERE booking_id = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, booking.getBookedVehicleId());
+            stmt.setString(2, booking.getPricingType().name());
+            stmt.setDate(3, new java.sql.Date(booking.getBookingDate().getTime())); // Convert java.util.Date to java.sql.Date
+            stmt.setInt(4, booking.getBookingId());
+            
+            return stmt.executeUpdate() > 0;
+        }
+    }
+    
 
 
     @Override
     public boolean deleteBooking(int bookingId) throws SQLException {
         String sql = "UPDATE booking SET is_delete = true WHERE booking_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, bookingId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    @Override
+    public List<BookingDTO> getBookingsByCustomer(String search, int limit, int offset, int customerId)
+            throws SQLException {
+
+        List<BookingDTO> bookings = new ArrayList<>();
+        String sql = "SELECT b.*, v.*, c.* FROM booking b " +
+                     "JOIN vehicle v ON b.booked_vehicle_id = v.vehicle_id " +
+                     "JOIN customer c ON b.user_id = c.user_id " +
+                     "WHERE b.is_delete = 0 " +
+                     "AND b.user_id = ? " +  // Filter by customerId
+                     "AND c.customer_name LIKE ? LIMIT ? OFFSET ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, customerId);  // Set customerId parameter
+            stmt.setString(2, "%" + search + "%");
+            stmt.setInt(3, limit);
+            stmt.setInt(4, offset);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                CustomerDTO customer = new CustomerDTO(
+                        rs.getInt("customer_id"),
+                        rs.getString("customer_name"),
+                        rs.getString("address"),
+                        rs.getString("nic_number"),
+                        rs.getString("contact_number")
+                );
+
+                VehicleDTO vehicle = new VehicleDTO(
+                        rs.getInt("vehicle_id"),
+                        rs.getString("vehicle_brand"),
+                        rs.getString("vehicle_model"),
+                        rs.getString("plate_number"),
+                        rs.getInt("capacity"),
+                        VehicleStatus.valueOf(rs.getString("vehicle_status")),
+                        VehicleType.valueOf(rs.getString("vehicle_type")),
+                        rs.getString("image_url_string"),
+                        rs.getDouble("rate_per_km"),
+                        rs.getDouble("rate_per_day")
+                );
+
+                bookings.add(new BookingDTO(
+                        rs.getInt("booking_id"),
+                        rs.getInt("user_id"),
+                        rs.getInt("booked_vehicle_id"),
+                        rs.getObject("driver_id") != null ? rs.getInt("driver_id") : null,
+                        rs.getDate("booking_date"),
+                        BookingStatus.valueOf(rs.getString("booking_status")),
+                        PricingType.valueOf(rs.getString("pricing_type")),
+                        vehicle,
+                        customer
+                ));
+            }
+        }
+        return bookings;
+    }
+
+    @Override
+    public int getBookingsCountByCustomer(String search,int customerId) throws SQLException {
+    	String sql = "SELECT COUNT(*) AS total FROM booking b " +
+                "JOIN vehicle v ON b.booked_vehicle_id = v.vehicle_id " +
+                "JOIN customer c ON b.user_id = c.user_id " +
+                "WHERE b.is_delete = 0 " +
+                "AND b.user_id = ? " +  // Filter by customerId
+                "AND c.customer_name LIKE LOWER(?) ";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, customerId);
+            stmt.setString(2, "%" + search + "%");
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? rs.getInt(1) : 0;
+        }
+    }
+    
+    @Override
+    public boolean calcelBooking(int bookingId) throws SQLException {
+        String sql = "UPDATE booking SET booking_status = 'CANCELED' WHERE booking_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, bookingId);
             return stmt.executeUpdate() > 0;

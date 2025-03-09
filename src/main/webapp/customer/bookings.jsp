@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-	<title>Vehicles</title>
+	<title>Bookings</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -38,11 +38,14 @@
 	<jsp:include page="../components/menu-bar.jsp" />
 	<div class="container mt-4">
 	<div class="d-flex justify-content-between align-items-center mb-3">
-		<h2 class="mb-0">Vehicle Details</h2>
+		<h2 class="mb-0">Booking Details</h2>
+		<a href="${pageContext.request.contextPath}/dashboard/add-booking">
+			<button class="btn btn-dark d-none"><i class="bi bi-plus-lg"></i> Add Booking</button>
+		</a> 
 	</div>
 		<div class="d-flex justify-content-end mb-3">
             <form class="d-flex me-2" method="GET">
-                <input class="form-control" type="search" placeholder="Search by brand" aria-label="Search" name="search" value="<%= searchQuery %>">
+                <input class="form-control" type="search" placeholder="Search..." aria-label="Search" name="search" value="<%= searchQuery %>">
                 <input type="hidden" name="entries" value="<%= entries %>">
                 <input type="hidden" name="page" value="1">
                 <button type="submit" class="btn btn-dark">Search</button>
@@ -53,38 +56,43 @@
 	            <thead class="table-light">
 	                <tr>
 	                    <th>No</th>
-	                    <th>Image</th>
-	                    <th>Vehicle</th>
-	                    <th>Capacity</th>
-	                    <th>Vehicle Type</th>
-	                    <th>Rate per Km</th>
-	                    <th>Rate per Day</th>
+	                    <th>Number Plate</th>
+	                    <th>Booking Date</th>
+	                    <th>Booking Status</th>
+	                    <th>Pricing Type</th>
 	                    <th>Action</th>
 	                </tr>
 	            </thead>
 	            <tbody>
 	            <c:choose>
-		            <c:when test="${not empty vehicles}">
-		                <c:forEach var="vehicle" items="${vehicles}" varStatus="status">
+		            <c:when test="${not empty bookings}">
+		                <c:forEach var="booking" items="${bookings}" varStatus="status">
+							<c:set var="driverIdValue" value="${empty booking.driverId ? 'Not Assigned' : booking.driverId}" />
 		                    <tr>
 								<td>${(page - 1) * entries + status.index + 1}</td>
-								<td><img src="${vehicle.imageURLString}" class="img-fluid pointer" style="height: 40px; width: auto; cursor: pointer;" onclick="showImage('${vehicle.imageURLString}')"/></td>
-		                        <td>${vehicle.vehicleBrand} - ${vehicle.vehicleModel}</td>
-		                        <td>${vehicle.capacity}</td>
-		                        <td>${vehicle.vehicleType}</td>
-		                        <td>${vehicle.ratePerKM}</td>
-		                        <td>${vehicle.ratePerDay}</td>
-		                        <td class="align-middle text-center">
-		                        <c:if test="${not empty sessionScope.accountType and sessionScope.accountType eq 'CUSTOMER'}">
-		                        	<button class="btn btn-dark" class="btn btn-sm btn-info" onclick="bookAVehicle('${vehicle.vehicleId}')">Book</button></c:if>
-		                        <c:if test="${empty sessionScope.accountType}"><a href="login"><button class="btn btn-dark" class="btn btn-sm btn-info">Book</button></a></c:if>
+		                        <td>
+		                        	<a style="cursor: pointer;" class="pointer" onclick="showVehicleDetails(${booking.vehicleDTO.vehicleId}, '${booking.vehicleDTO.vehicleBrand}', '${booking.vehicleDTO.vehicleModel}', '${booking.vehicleDTO.plateNumber}', ${booking.vehicleDTO.capacity}, '${booking.vehicleDTO.vehicleStatus}', '${booking.vehicleDTO.vehicleType}','${booking.vehicleDTO.ratePerKM}','${booking.vehicleDTO.ratePerDay}','${booking.vehicleDTO.imageURLString}')">${booking.vehicleDTO.plateNumber}</a>
+		                        </td>
+		                        <td>${booking.bookingDate}</td>
+								<td>${booking.bookingStatus}</td>
+								<td>
+								    ${booking.pricingType}
+								</td>
+		                        <td class="d-flex justify-content-center gap-2 h-full">
+			                        <c:if test="${booking.bookingStatus eq 'COMPLETED'}">
+			                        	<a href="${pageContext.request.contextPath}/view-bill?bookingId=${booking.bookingId}" class="btn btn-sm btn-dark"><i class="bi bi-receipt"></i></a>
+			                        </c:if>
+			                        <c:if test="${booking.bookingStatus ne 'COMPLETED' and booking.bookingStatus ne 'CANCELED' }">
+			                        	<a href="${pageContext.request.contextPath}/update-booking?bookingId=${booking.bookingId}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
+			                        	<button class="btn btn-sm btn-danger" data-user-id="${booking.bookingId}" onclick="handleDelete(${booking.bookingId})"><i class="bi bi-x-octagon"></i></button>
+			                        </c:if>
 		                        </td>
 		                    </tr>
 		                </c:forEach>
 		            </c:when>
 		            <c:otherwise>
 		                <tr>
-		                    <td colspan="7" class="text-center">No users found</td>
+		                    <td colspan="7" class="text-center">No data found</td>
 		                </tr>
 		            </c:otherwise>
 		        </c:choose>
@@ -123,76 +131,17 @@
         </div>
 	</div>
 	<jsp:include page="../components/footer.jsp"/>
-	<jsp:include page="../components/toaster.jsp" />
+	     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	
 	<c:if test="${message ne null}">
 	   <div class="alert alert-danger" role="alert">
 		${message}
 		</div>
 	</c:if>
 	<script>
-	
-	function bookAVehicle(vehicleId) {
-	    const date = new Date().toISOString().split('T')[0]; 
-	    Swal.fire({
-	        title: "Book a Ride ",
-	        html: `
-	            <form id="bookingForm" action="${pageContext.request.contextPath}/customer/create-booking" method="POST">
-	                <!-- Booking Date -->
-	                <div class="mb-3">
-	                    <label for="bookingDate" class="form-label text-start d-block">Booking Date</label>
-	                    <input type="date" class="form-control" id="bookingDate" name="bookingDate" placeholder="Select a date" min="`+date+`" required>
-	                </div>
-
-	                <!-- Pricing Type -->
-	                <div class="mb-5">
-	                    <label for="pricingType" class="form-label text-start d-block">Pricing Type</label>
-	                    <select class="form-select" id="pricingType" name="pricingType" required>
-	                        <option value="PER_KM_WITH_DRIVER">Per KM with Driver</option>
-	                        <option value="PER_KM_WITHOUT_DRIVER">Per KM without Driver</option>
-	                        <option value="PER_DAY_WITH_DRIVER">Per Day with Driver</option>
-	                        <option value="PER_DAY_WITHOUT_DRIVER">Per Day without Driver</option>
-	                    </select>
-	                </div>
-	                
-	                <input type="hidden" value="`+vehicleId+`" name="vehicleId">
-
-	                <div class="text-center">
-	                    <button type="submit" class="btn btn-dark w-100">Book</button>
-	                </div>
-	            </form>
-	        `,
-	        showCancelButton: false,
-	        showConfirmButton: false
-	    });
-	}
-
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const Message = urlParams.get('error');
-    if (Message) {
-        Swal.fire({
-            position: "top-end",
-            icon: "error",
-            title: Message,
-            showConfirmButton: false,
-            timer: 1500
-        });
-    }
-    
-    const urlParams2 = new URLSearchParams(window.location.search);
-    const successMessage = urlParams2.get('success');
-    if (successMessage) {
-        Swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: Message,
-            showConfirmButton: false,
-            timer: 1500
-        });
-    }
 
 	function handleDelete(id){
-		const url = `${pageContext.request.contextPath}/dashboard/delete-vehicle?search=<%= searchQuery %>&entries=<%= entries %>&page=<%= currentPage %>&vehicleId=`+id;
+		const url = `${pageContext.request.contextPath}/cancel-booking?search=<%= searchQuery %>&entries=<%= entries %>&page=<%= currentPage %>&bookingId=`+id;
 	
 		Swal.fire({
             title: "Are you sure?",
@@ -201,16 +150,18 @@
             showCancelButton: true,
             confirmButtonColor: "#d33",
             cancelButtonColor: "#3085d6",
-            confirmButtonText: "Yes, delete it!"
+            confirmButtonText: "Yes, Cancel it!"
         }).then((result) => {
             if (result.isConfirmed) {
                 window.location.href = url;
             }
         });
 	}
-	function showVehicleDetails(vehicleId, vehicleBrand, vehicleModel, plateNumber, capacity, vehicleStatus,vehicleType,ratePerKM,ratePerDay) {
+	
+	function showVehicleDetails(vehicleId, vehicleBrand, vehicleModel, plateNumber, capacity, vehicleStatus,vehicleType,ratePerKM,ratePerDay,url) {
 	    Swal.fire({
 	        title: "Vehicle Details",
+	        imageUrl: url,
 	        html: 
 	            "<div style='text-align: left;'>" +
 	                "<p><strong>Vehicle ID:</strong> " + vehicleId + "</p>" +
@@ -223,6 +174,52 @@
 	                "<p><strong>Per KM:</strong> " + ratePerKM + "</p>" +
 	                "<p><strong>Per Day:</strong> " + ratePerDay + "</p>" +
 	            "</div>",
+	        confirmButtonText: "OK",
+	        confirmButtonColor: "#3085d6",
+	        background: "#f8f9fa",
+	        customClass: {
+	            popup: "rounded-3 shadow-lg",
+	            title: "fw-bold"
+	        }
+	    });
+	}
+	
+	function showCustomerDetails(customerId, customerName, address, nic_number, contact_number) {
+	    Swal.fire({
+	        title: "Customer Details",
+	        html: 
+	            "<div style='text-align: left;'>" +
+	                "<p><strong>Customer ID:</strong> " + customerId + "</p>" +
+	                "<p><strong>Customer Name:</strong> " + customerName + "</p>" +
+	                "<p><strong>Address:</strong> " + address + "</p>" +
+	                "<p><strong>NIC Number:</strong> " + nic_number + "</p>" +
+	                "<p><strong>Contact:</strong> " + contact_number + "</p>" +
+	            "</div>",
+	        icon: "info",
+	        confirmButtonText: "OK",
+	        confirmButtonColor: "#3085d6",
+	        background: "#f8f9fa",
+	        customClass: {
+	            popup: "rounded-3 shadow-lg",
+	            title: "fw-bold"
+	        }
+	    });
+	}
+	
+	function showBookingDetails(bookingId, customerId, vehicledId, date, status,driverId,pricing_type) {
+	    Swal.fire({
+	        title: "Customer Details",
+	        html: 
+	            "<div style='text-align: left;'>" +
+	                "<p><strong>Booking ID:</strong> " + bookingId + "</p>" +
+	                "<p><strong>Customer Id:</strong> " + customerId + "</p>" +
+	                "<p><strong>Booking Date:</strong> " + vehicledId + "</p>" +
+	                "<p><strong>Booking Date:</strong> " + date + "</p>" +
+	                "<p><strong>Booking Status</strong> " + status + "</p>" +
+	                "<p><strong>Driver Id:</strong> " + driverId + "</p>" +
+	                "<p><strong>Pricing Type:</strong> " + pricing_type + "</p>" +
+	                
+	            "</div>",
 	        icon: "info",
 	        confirmButtonText: "OK",
 	        confirmButtonColor: "#3085d6",
@@ -234,14 +231,18 @@
 	    });
 	}
 
-	function showImage(url){
-		Swal.fire({
-			  imageUrl: url,
-			  imageAlt: "image",
-			});
-	}
-
-
+	 const urlParams = new URLSearchParams(window.location.search);
+     const successMessage = urlParams.get('success');
+     if (successMessage) {
+         Swal.fire({
+             position: "top-end",
+             icon: "success",
+             title: successMessage,
+             showConfirmButton: false,
+             timer: 1500
+         });
+     }
 </script>
+
 </body>
 </html>

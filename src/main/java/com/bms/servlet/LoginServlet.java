@@ -56,18 +56,18 @@ public class LoginServlet extends HttpServlet {
         
         if(Objects.isNull(userEmail) || userEmail.isBlank() || Objects.isNull(password) || password.isBlank()) {
         	request.setAttribute("error", "All fields are required.");
-        	request.getRequestDispatcher("/customer/register.jsp").forward(request, response);
+        	request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
         
         if(Objects.isNull(InputValidator.isValidEmail(userEmail))) {
             request.setAttribute("error", "Invalid Email");
-            request.getRequestDispatcher("/customer/register.jsp").forward(request, response);
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
         
         if(Objects.isNull(InputValidator.isValidPassword(password))) {
             request.setAttribute("error", "Invalid email or password");
-            request.getRequestDispatcher("/customer/register.jsp").forward(request, response);
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
         

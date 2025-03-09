@@ -18,34 +18,34 @@
     <div class="container mt-4">
         <h2 class="mb-4 text-center">Profile</h2>
         
-        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/dashboard/profile">
+        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/profile">
 
             <div class="mb-3">
-                <input type="hidden" class="form-control" id="staffId" name="staffId" value="${staff.staffId}" readonly>
+                <input type="hidden" class="form-control" id="customerId" name="customerId" value="${customer.userDTO.userId}" readonly>
             </div>
 
             <!-- Name -->
             <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control" id="name" name="name" value="${staff.name}" required>
+                <input type="text" class="form-control" id="name" name="name" value="${customer.customerName}" required>
             </div>
 
             <!-- Email -->
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email" value="${staff.userDTO.userEmail}" required>
+                <input type="email" class="form-control" id="email" name="email" value="${customer.userDTO.userEmail}" required>
             </div>
             
             <!-- Address -->
 	        <div class="mb-3">
 	            <label for="address" class="form-label">Address</label>
-	            <input type="text" class="form-control" id="address" value="${staff.address}" name="address" required>
+	            <input type="text" class="form-control" id="address" value="${customer.address}" name="address" required>
 	        </div>
 	        
 	        <!-- Contact Number -->
 	        <div class="mb-3">
 	            <label for="contactNumber" class="form-label">Contact</label>
-	            <input type="text" class="form-control" id="contactNumber" value="${staff.contactNumber}" name="contactNumber" required>
+	            <input type="text" class="form-control" id="contactNumber" value="${customer.contactNumber}" name="contactNumber" required>
 	        </div>
  
             <div class="text-center">

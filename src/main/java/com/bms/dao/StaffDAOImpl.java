@@ -220,7 +220,7 @@ public class StaffDAOImpl implements StaffDAO {
     
     @Override
     public boolean updateStaff(User user, Staff staff) throws SQLException {
-        String query1 = "UPDATE app_user user_email = ?, account_status = ?, account_type = ? WHERE user_id = ?";
+        String query1 = "UPDATE app_user SET user_email = ?, account_status = ?, account_type = ? WHERE user_id = ?";
         String query2 = "UPDATE staff SET name = ?, address = ?, contact_number = ? WHERE user_id = ?";
         
         try (PreparedStatement stmt1 = connection.prepareStatement(query1);

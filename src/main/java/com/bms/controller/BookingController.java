@@ -56,6 +56,10 @@ public class BookingController implements BookingSubject {
     public List<BookingDTO> getBookings(String search, int limit, int offset) throws SQLException {
         return bookingDAO.getBookings(search, limit, offset);
     }
+    
+    public List<BookingDTO> getBookingsByCustomer(String search, int limit, int offset, int customerId) throws SQLException {
+        return bookingDAO.getBookingsByCustomer(search, limit, offset,customerId);
+    } 
 
     public int getBookingsCount(String search) throws SQLException {
         return bookingDAO.getBookingsCount(search);
@@ -81,5 +85,24 @@ public class BookingController implements BookingSubject {
         return bookingDAO.deleteBooking(bookingId);
     }
 
-	
+    public int getBookingsCountByCustomer(String search, int customerId) throws SQLException {
+        return bookingDAO.getBookingsCountByCustomer(search,customerId);
+    }
+    
+    public boolean updateBookingByCustomer(BookingDTO BookingDTO) throws SQLException {
+    	Booking booking;
+    	
+    	if (BookingDTO.getPricingType() == PricingType.PER_DAY_WITH_DRIVER || BookingDTO.getPricingType() == PricingType.PER_KM_WITH_DRIVER) {
+            booking = new Booking(BookingDTO.getBookingId(),BookingDTO.getBookedVehicleId(),BookingDTO.getDriverId(),BookingDTO.getBookingDate(),BookingDTO.getBookingStatus(),BookingDTO.getPricingType());
+        } else {
+            booking = new Booking(BookingDTO.getBookingId(),BookingDTO.getBookedVehicleId(),null,BookingDTO.getBookingDate(),BookingDTO.getBookingStatus(),BookingDTO.getPricingType());
+        }
+    	
+        return bookingDAO.updateBookingByCustomer(booking);
+    }
+    
+    public boolean calcelBooking(int bookingId) throws SQLException {
+        return bookingDAO.calcelBooking(bookingId);
+    }
+
 }
