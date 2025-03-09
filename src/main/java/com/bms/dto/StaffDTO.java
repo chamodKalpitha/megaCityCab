@@ -1,56 +1,92 @@
 package com.bms.dto;
 
-import com.bms.enums.AccountStatus;
-import com.bms.enums.AccountType;
-
 public class StaffDTO {
+	private int staffId;
+	private String name;
+	private String address;
+	private String contactNumber;
+	private Boolean isDelete;
+	private UserDTO userDTO;
 	
-	private String empName;
-    private String empEmail;
-    private AccountStatus status;
-    private AccountType type;
-    
-	public StaffDTO(String empName, String empEmail, AccountStatus status, AccountType type) {
+	
+	
+	public StaffDTO(String name, String address, String contactNumber, UserDTO userDTO) {
 		super();
-		this.empName = empName;
-		this.empEmail = empEmail;
-		this.status = status;
-		this.type = type;
+		this.name = name;
+		this.address = address;
+		this.contactNumber = contactNumber;
+		this.userDTO = userDTO;
 	}
 
-	public String getEmpName() {
-		return empName;
-	}
 
-	public void setEmpName(String empName) {
-		this.empName = empName;
-	}
-
-	public String getEmpEmail() {
-		return empEmail;
-	}
-
-	public void setEmpEmail(String empEmail) {
-		this.empEmail = empEmail;
-	}
-
-	public AccountStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(AccountStatus status) {
-		this.status = status;
-	}
-
-	public AccountType getType() {
-		return type;
-	}
-
-	public void setType(AccountType type) {
-		this.type = type;
+	public StaffDTO(String name, String address, String contactNumber, Boolean isDelete, UserDTO userDTO) {
+		super();
+		this.name = name;
+		this.address = address;
+		this.contactNumber = contactNumber;
+		this.isDelete = isDelete;
+		this.userDTO = userDTO;
 	}
 	
 	
-    
-    
+	public StaffDTO(int staffId, String name, String address, String contactNumber, Boolean isDelete, UserDTO userDTO) {
+		super();
+		this.staffId = staffId;
+		this.name = name;
+		this.address = address;
+		this.contactNumber = contactNumber;
+		this.isDelete = isDelete;
+		this.userDTO = userDTO;
+	}
+
+
+
+	public int getStaffId() {
+		return staffId;
+	}
+	
+	public void setStaffId(int staffId) {
+		this.staffId = staffId;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getAddress() {
+		return address;
+	}
+	
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	
+	public String getContactNumber() {
+		return contactNumber;
+	}
+	
+	public void setContactNumber(String contactNumber) {
+		this.contactNumber = contactNumber;
+	}
+	
+	public Boolean getIsDelete() {
+		return isDelete;
+	}
+	public void setIsDelete(Boolean isDelete) {
+		this.isDelete = isDelete;
+	}
+	
+	public UserDTO getUserDTO() {
+		return userDTO;
+	}
+	
+	public void setUserDTO(UserDTO userDTO) {
+		this.userDTO = userDTO;
+	}
+	
+	
 }
