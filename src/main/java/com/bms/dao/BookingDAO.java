@@ -18,4 +18,12 @@ public interface BookingDAO {
     boolean updateBooking(Booking booking) throws SQLException;
 
     boolean deleteBooking(int bookingId) throws SQLException;
+    
+    List<BookingDTO> getBookingsByCustomer(String search, int limit, int offset, int customerId) throws SQLException;
+
+    int getBookingsCountByCustomer(String search, int customerId) throws SQLException;
+    
+    boolean updateBookingByCustomer(Booking booking) throws SQLException;
+    
+    boolean calcelBooking(int bookingId) throws SQLException;
 }

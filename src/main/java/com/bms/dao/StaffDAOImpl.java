@@ -23,8 +23,6 @@ public class StaffDAOImpl implements StaffDAO {
     
 	public StaffDAOImpl() {
         this.connection = DatabaseConfig.getInstance().getConnection();
-    	System.out.println(connection);
-
 	}
 
 	@Override
@@ -222,7 +220,7 @@ public class StaffDAOImpl implements StaffDAO {
     
     @Override
     public boolean updateStaff(User user, Staff staff) throws SQLException {
-        String query1 = "UPDATE app_user user_email = ?, account_status = ?, account_type = ? WHERE user_id = ?";
+        String query1 = "UPDATE app_user SET user_email = ?, account_status = ?, account_type = ? WHERE user_id = ?";
         String query2 = "UPDATE staff SET name = ?, address = ?, contact_number = ? WHERE user_id = ?";
         
         try (PreparedStatement stmt1 = connection.prepareStatement(query1);
@@ -283,6 +281,79 @@ public class StaffDAOImpl implements StaffDAO {
             }
         }
         return false;
+	}
+
+	@Override
+	public boolean updateStaffProfile(User user, Staff staff) throws SQLException {
+        String query1 = "UPDATE app_user SET user_email = ? WHERE user_id = ?";
+        String query2 = "UPDATE staff SET name = ?, address = ?, contact_number = ? WHERE user_id = ?";
+        
+        
+        try (PreparedStatement stmt1 = connection.prepareStatement(query1);
+             PreparedStatement stmt2 = connection.prepareStatement(query2)) {
+            
+            connection.setAutoCommit(false);
+            
+            stmt1.setString(1, user.getUserEmail());
+            stmt1.setInt(2, user.getUserId());
+            
+            int rowsUpdated1 = stmt1.executeUpdate();
+            
+            stmt2.setString(1, staff.getName());
+            stmt2.setString(2, staff.getAddress());
+            stmt2.setString(3, staff.getContactNumber());
+            stmt2.setInt(4, user.getUserId());
+            
+            int rowsUpdated2 = stmt2.executeUpdate();
+            
+            if (rowsUpdated1 > 0 && rowsUpdated2 > 0) {
+                connection.commit();
+                return true;
+            } else {
+                connection.rollback();
+                return false;
+            }
+        } catch (SQLException e) {
+            connection.rollback();
+            throw e;
+        } finally {
+            connection.setAutoCommit(true); 
+        }
+	}
+
+	@Override
+	public StaffDTO getStaffByUserId(int userId) throws SQLException {
+	        String sql = "SELECT u.user_id, u.user_email, u.account_type, u.account_status, " +
+	                "s.staff_id, s.name, s.address, s.contact_number, s.is_delete " +
+	                "FROM app_user u " +
+	                "JOIN staff s ON u.user_id = s.user_id " +
+	                "WHERE s.user_id = ?";
+	   
+		   try (PreparedStatement ps = connection.prepareStatement(sql)) {
+		       ps.setInt(1, userId);
+		       
+		       try (ResultSet rs = ps.executeQuery()) {
+		           if (rs.next()) {
+		               UserDTO userDTO = new UserDTO(
+		                   rs.getInt("user_id"),
+		                   rs.getString("user_email"),
+		                   AccountType.valueOf(rs.getString("account_type")),
+		                   AccountStatus.valueOf(rs.getString("account_status"))
+		               );
+		               
+		               return new StaffDTO(
+		                   rs.getInt("staff_id"),
+		                   rs.getString("name"),
+		                   rs.getString("address"),
+		                   rs.getString("contact_number"),
+		                   rs.getBoolean("is_delete"),
+		                   userDTO
+		               );
+		           }
+		       }
+		   }
+		   
+		   return null;
 	}
 
 }

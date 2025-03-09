@@ -56,18 +56,18 @@ public class LoginServlet extends HttpServlet {
         
         if(Objects.isNull(userEmail) || userEmail.isBlank() || Objects.isNull(password) || password.isBlank()) {
         	request.setAttribute("error", "All fields are required.");
-        	request.getRequestDispatcher("/customer/register.jsp").forward(request, response);
+        	request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
         
         if(Objects.isNull(InputValidator.isValidEmail(userEmail))) {
             request.setAttribute("error", "Invalid Email");
-            request.getRequestDispatcher("/customer/register.jsp").forward(request, response);
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
         
         if(Objects.isNull(InputValidator.isValidPassword(password))) {
             request.setAttribute("error", "Invalid email or password");
-            request.getRequestDispatcher("/customer/register.jsp").forward(request, response);
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
         
@@ -87,15 +87,22 @@ public class LoginServlet extends HttpServlet {
             } 
             
             if(responseLoginDTO.getAccountType() == AccountType.ADMIN) {
+            	session.setAttribute("staffId", responseLoginDTO.getUserId());
             	session.setAttribute("accountType", responseLoginDTO.getAccountType());
                 response.sendRedirect(request.getContextPath()+"/dashboard/staffs"); 
+            }
+            
+            if(responseLoginDTO.getAccountType() == AccountType.MANAGER || responseLoginDTO.getAccountType() == AccountType.STAFF) {
+            	session.setAttribute("staffId", responseLoginDTO.getUserId());
+            	session.setAttribute("accountType", responseLoginDTO.getAccountType());
+                response.sendRedirect(request.getContextPath()+"/dashboard/bookings"); 
             }
             
             if(responseLoginDTO.getAccountType() == AccountType.CUSTOMER) {
             	session.setAttribute("customerId", responseLoginDTO.getUserId());
             	session.setAttribute("accountType", responseLoginDTO.getAccountType());
                 response.sendRedirect(request.getContextPath()+"/vehicles"); 
-            }
+            } 
             
         } catch (SQLException e) {
         	

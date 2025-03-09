@@ -41,12 +41,14 @@ public class CustomerController {
     public boolean updateCustomer(CustomerDTO customerDto) throws SQLException, IllegalArgumentException {
         InputValidator.isValidPhoneNumber(customerDto.getContactNumber());
         Customer customer = new Customer();
+        User user = new User();
         customer.setCustomerId(customerDto.getCustomerId());
         customer.setCustomerName(customerDto.getCustomerName());
         customer.setAddress(customerDto.getAddress());
-        customer.setNicNumber(customerDto.getNicNumber());
         customer.setContactNumber(customerDto.getContactNumber());
-        return customerDAO.updateCustomer(customer);
+        customer.setUserId(customerDto.getUserDTO().getUserId());
+        user.setUserEmail(customerDto.getUserDTO().getUserEmail());
+        return customerDAO.updateCustomer(customer,user);
     }
 
     public boolean deleteCustomer(int customerId) throws SQLException {

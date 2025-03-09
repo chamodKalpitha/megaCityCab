@@ -2,7 +2,9 @@ package com.bms.dao;
 
 import com.bms.config.DatabaseConfig;
 import com.bms.dto.CustomerDTO;
+import com.bms.dto.UserDTO;
 import com.bms.model.Customer;
+import com.bms.model.Staff;
 import com.bms.model.User;
 import com.bms.utils.PasswordUtils;
 
@@ -20,7 +22,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 
 
     public boolean createCustomer(User user, Customer customer) throws SQLException {
-        String userSql = "INSERT INTO app_user (user_name, user_email, account_status, account_type, password) VALUES (?, ?, ?, ?, ?)";
+        String userSql = "INSERT INTO app_user (user_email, account_status, account_type, password) VALUES (?, ?, ?, ?)";
         String customerSql = "INSERT INTO customer (customer_name, address, nic_number, contact_number, user_id, is_delete) VALUES (?, ?, ?, ?, ?, false)";
         
         try {
@@ -111,33 +113,76 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public CustomerDTO getCustomerById(int customerId) throws SQLException {
-        String sql = "SELECT * FROM customers WHERE customer_id = ? AND is_delete = false";
+        String sql = "SELECT c.customer_id, c.customer_name, c.address, c.nic_number, c.contact_number, c.user_id, " +
+                     "u.user_email, u.account_status, u.account_type " +
+                     "FROM customer c " +
+                     "JOIN app_user u ON c.user_id = u.user_id " +
+                     "WHERE c.user_id = ? AND c.is_delete = 0 AND u.is_delete = 0";
+        
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, customerId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
+            	
+            	UserDTO userDTO = new UserDTO(rs.getInt("user_id"),rs.getString("user_email"));
+            	
                 return new CustomerDTO(
                         rs.getInt("customer_id"),
                         rs.getString("customer_name"),
                         rs.getString("address"),
                         rs.getString("nic_number"),
-                        rs.getString("contact_number")
+                        rs.getString("contact_number"),
+                        userDTO
                 );
             }
         }
         return null;
     }
 
+//    @Override
+//    public boolean updateCustomer(Customer customer) throws SQLException {
+//        String query1 = "UPDATE customer SET customer_name = ?, address = ?, contact_number = ? WHERE user_id = ?";
+//        String query2 = "UPDATE app_user SET user_email = ? WHERE user_id = ?";
+//        
+//        try (PreparedStatement stmt = connection.prepareStatement(query1)) {
+//            stmt.setString(1, customer.getCustomerName());
+//            stmt.setString(2, customer.getAddress());
+//            stmt.setString(3, customer.getContactNumber());
+//            stmt.setInt(4, customer.getUserId());
+//            return stmt.executeUpdate() > 0;
+//        }
+//    }
+    
     @Override
-    public boolean updateCustomer(Customer customer) throws SQLException {
-        String sql = "UPDATE customers SET customer_name = ?, address = ?, nic_number = ?, contact_number = ? WHERE customer_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, customer.getCustomerName());
-            stmt.setString(2, customer.getAddress());
-            stmt.setString(3, customer.getNicNumber());
-            stmt.setString(4, customer.getContactNumber());
-            stmt.setInt(5, customer.getCustomerId());
-            return stmt.executeUpdate() > 0;
+    public boolean updateCustomer(Customer customer,User user) throws SQLException {
+        String query1 = "UPDATE customer SET customer_name = ?, address = ?, contact_number = ? WHERE user_id = ?";
+        String query2 = "UPDATE app_user SET user_email = ? WHERE user_id = ?";
+        
+        try (
+            PreparedStatement stmt1 = connection.prepareStatement(query1);
+            PreparedStatement stmt2 = connection.prepareStatement(query2)
+        ) {
+            connection.setAutoCommit(false); // Start transaction
+
+            // First update
+            stmt1.setString(1, customer.getCustomerName());
+            stmt1.setString(2, customer.getAddress());
+            stmt1.setString(3, customer.getContactNumber());
+            stmt1.setInt(4, customer.getUserId());
+            int rowsAffected1 = stmt1.executeUpdate();
+
+            // Second update
+            stmt2.setString(1, user.getUserEmail());
+            stmt2.setInt(2, customer.getUserId());
+            int rowsAffected2 = stmt2.executeUpdate();
+
+            connection.commit(); // Commit transaction
+            return rowsAffected1 > 0 && rowsAffected2 > 0;
+        } catch (SQLException e) {
+            connection.rollback(); // Rollback transaction on error
+            throw e;
+        } finally {
+            connection.setAutoCommit(true); // Restore auto-commit mode
         }
     }
 

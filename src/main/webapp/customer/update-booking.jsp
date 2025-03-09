@@ -17,7 +17,7 @@
     <div class="container mt-4">
         <h2 class="mb-4 text-center">Edit Booking</h2>
         
-        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/dashboard/update-booking?bookingId=${booking.bookingId}">
+        <form class="mx-auto mb-5" style="max-width: 500px;" method="POST" action="${pageContext.request.contextPath}/update-booking?bookingId=${booking.bookingId}">
             <!-- Booking ID (Read-only) -->
             <div class="mb-3">
                 <label for="bookingId" class="form-label">Booking ID</label>
@@ -42,16 +42,6 @@
                 <input type="date" class="form-control" id="bookingDate" name="bookingDate" value="${booking.bookingDate}" required>
             </div>
 
-            <!-- Booking Status -->
-            <div class="mb-3">
-                <label for="bookingStatus" class="form-label">Booking Status</label>
-                <select class="form-select" id="bookingStatus" name="bookingStatus" required>
-                    <option value="PENDING" ${booking.bookingStatus == 'PENDING' ? 'selected' : ''}>Pending</option>
-                    <option value="COMPLETED" ${booking.bookingStatus == 'COMPLETED' ? 'selected' : ''}>Completed</option>
-                    <option value="CANCELED" ${booking.bookingStatus == 'CANCELED' ? 'selected' : ''}>Canceled</option>
-                </select>
-            </div>
-
             <!-- Pricing Type -->
             <div class="mb-3">
                 <label for="pricingType" class="form-label">Pricing Type</label>
@@ -63,22 +53,6 @@
                 </select>
            </div>
             
-            
-            <div class="mb-3">
-		        <c:choose>
-		            <c:when test="${booking.pricingType.toString() eq 'PER_KM_WITH_DRIVER' or booking.pricingType.toString() eq 'PER_DAY_WITH_DRIVER'}">
-						<label for="driverId" class="form-label">Driver</label>
-		                <select class="form-select" id="driverId" name="driverId" required>
-		                    <c:forEach var="driver" items="${drivers}">
-		                        <option value="${driver.driverId}" ${driver.driverId == booking.driverId ? 'selected' : ''}>
-		                            ${driver.driverName}-(${driver.nicNumber})
-		                        </option>
-		                    </c:forEach>
-		                </select>
-		            </c:when>
-		        </c:choose>
-		    </div>
-
             <!-- Update Button -->
             <div class="text-center">
                 <button type="submit" class="btn btn-dark w-100">Update Booking</button>
@@ -88,22 +62,7 @@
     <jsp:include page="../components/footer.jsp"/>
     <script>
     
-    document.addEventListener("DOMContentLoaded", function () {
-        const pricingTypeSelect = document.getElementById("pricingType");
-        const driverField = document.getElementById("driverId")?.closest(".mb-3"); // Get the parent div of driverId
 
-        function toggleDriverField() {
-            const selectedValue = pricingTypeSelect.value;
-            if (selectedValue === "PER_KM_WITH_DRIVER" || selectedValue === "PER_DAY_WITH_DRIVER") {
-                driverField.style.display = "block";
-            } else {
-                driverField.style.display = "none";
-            }
-        }
-
-        pricingTypeSelect.addEventListener("change", toggleDriverField);
-        toggleDriverField(); // Run once on page load to set initial state
-    });
     </script>
 </body>
 </html>

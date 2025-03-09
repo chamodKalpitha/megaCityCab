@@ -20,7 +20,11 @@ public class User {
 		this.password = password;
 	}
 	
-	
+	public User(int userId, String userEmail) {
+		super();
+		this.userId = userId;
+		this.userEmail = userEmail;
+	}
 
 	public User(int userId, String userEmail, AccountStatus accountStatus, AccountType accountType) {
 		this.userId = userId;

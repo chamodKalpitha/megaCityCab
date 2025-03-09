@@ -19,5 +19,9 @@
 	<classpathentry kind="lib" path="D:/software/JAR Files/JAR Files/servlet-api.jar"/>
 	<classpathentry kind="lib" path="D:/software/JAR Files/JAR Files/javax.mail-1.6.2.jar"/>
 	<classpathentry kind="lib" path="D:/software/JAR Files/JAR Files/activation-1.1.jar"/>
+	<classpathentry kind="lib" path="D:/software/JAR Files/JAR Files/Unit test/h2-1.4.197.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
+	<classpathentry kind="lib" path="D:/software/JAR Files/JAR Files/Unit test/junit-jupiter-api-5.9.2.jar"/>
+	<classpathentry kind="lib" path="D:/software/JAR Files/JAR Files/Unit test/mockito-core-5.12.0.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

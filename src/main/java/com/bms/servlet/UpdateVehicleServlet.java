@@ -109,15 +109,17 @@ public class UpdateVehicleServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Vehicle not found");
                 return;
             }
-        	
-        	Boolean isDuplicatePlateNumber = vehicleController.checkDuplicateVehicleNumberPlate(plateNumber);
-        	        	
-        	if(isDuplicatePlateNumber) {
-                request.setAttribute("vehicle", existingVehicleDTO);
-                request.setAttribute("error", "Duplicate vehicle number plate");
-                request.getRequestDispatcher("/dashboard/update-vehicle.jsp?vehicleId="+vehicleId).forward(request, response);
-                return;
-        	}
+            
+            if(!plateNumber.equals(existingVehicleDTO.getPlateNumber())) {
+            	Boolean isDuplicatePlateNumber = vehicleController.checkDuplicateVehicleNumberPlate(plateNumber);
+	        	
+            	if(isDuplicatePlateNumber) {
+                    request.setAttribute("vehicle", existingVehicleDTO);
+                    request.setAttribute("error", "Duplicate vehicle number plate");
+                    request.getRequestDispatcher("/dashboard/update-vehicle.jsp?vehicleId="+vehicleId).forward(request, response);
+                    return;
+            	}
+            }
         	
             boolean isUpdated = vehicleController.updateVehicle(vehicleDTO);
             if (isUpdated) {
